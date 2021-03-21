@@ -145,7 +145,7 @@ public class ReadWriteMemory extends VirtualMemory {
         // truncate file to the size of first page
         final long firstPage = getPageAddress(0);
         final long pageSize = getMapPageSize();
-        Unsafe.getUnsafe().setMemory(firstPage, pageSize, (byte) 0);
+        Unsafe.UNSAFE.setMemory(firstPage, pageSize, (byte) 0);
         for (int i = 1, n = pages.size(); i < n; i++) {
             release(i, pages.getQuick(i));
             pages.setQuick(i, 0);
@@ -159,7 +159,7 @@ public class ReadWriteMemory extends VirtualMemory {
 
             // we could not truncate the file; we have to clear it via memory mapping
             long mem = ff.mmap(fd, fileSize, 0,  Files.MAP_RW);
-            Unsafe.getUnsafe().setMemory(mem + pageSize, fileSize - pageSize, (byte) 0);
+            Unsafe.UNSAFE.setMemory(mem + pageSize, fileSize - pageSize, (byte) 0);
             ff.munmap(mem, fileSize);
             LOG.info().$("could not truncate, zeroed [fd=").$(fd).$(']').$();
         }

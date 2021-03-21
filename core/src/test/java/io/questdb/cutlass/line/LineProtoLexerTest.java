@@ -284,7 +284,7 @@ public class LineProtoLexerTest {
         try {
             final int len = bytes.length;
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putByte(mem + i, bytes[i]);
+                Unsafe.UNSAFE.putByte(mem + i, bytes[i]);
             }
             for (int i = 0; i < len; i++) {
                 lineAssemblingParser.clear();
@@ -311,7 +311,7 @@ public class LineProtoLexerTest {
         long mem = Unsafe.malloc(line.length);
         try {
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putByte(mem + i, line[i]);
+                Unsafe.UNSAFE.putByte(mem + i, line[i]);
             }
 
             if (len < 10) {

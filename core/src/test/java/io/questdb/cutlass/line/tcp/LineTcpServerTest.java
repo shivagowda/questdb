@@ -360,7 +360,7 @@ public class LineTcpServerTest extends AbstractCairoTest {
         byte[] lineDataBytes = lineData.getBytes(StandardCharsets.UTF_8);
         long bufaddr = Unsafe.malloc(lineDataBytes.length);
         for (int n = 0; n < lineDataBytes.length; n++) {
-            Unsafe.getUnsafe().putByte(bufaddr + n, lineDataBytes[n]);
+            Unsafe.UNSAFE.putByte(bufaddr + n, lineDataBytes[n]);
         }
         int rc = Net.send(fd, bufaddr, lineDataBytes.length);
         Unsafe.free(bufaddr, lineDataBytes.length);

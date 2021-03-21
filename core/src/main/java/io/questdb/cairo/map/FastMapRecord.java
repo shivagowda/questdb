@@ -135,7 +135,7 @@ final class FastMapRecord implements MapRecord {
     @Override
     public BinarySequence getBin(int columnIndex) {
         long address = addressOfColumn(columnIndex);
-        int len = Unsafe.getUnsafe().getInt(address);
+        int len = Unsafe.UNSAFE.getInt(address);
         if (len == TableUtils.NULL_LEN) {
             return null;
         }
@@ -146,7 +146,7 @@ final class FastMapRecord implements MapRecord {
 
     @Override
     public long getBinLen(int columnIndex) {
-        return Unsafe.getUnsafe().getInt(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getInt(addressOfColumn(columnIndex));
     }
 
     @Override
@@ -156,27 +156,27 @@ final class FastMapRecord implements MapRecord {
 
     @Override
     public byte getByte(int columnIndex) {
-        return Unsafe.getUnsafe().getByte(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getByte(addressOfColumn(columnIndex));
     }
 
     @Override
     public double getDouble(int columnIndex) {
-        return Unsafe.getUnsafe().getDouble(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getDouble(addressOfColumn(columnIndex));
     }
 
     @Override
     public float getFloat(int columnIndex) {
-        return Unsafe.getUnsafe().getFloat(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getFloat(addressOfColumn(columnIndex));
     }
 
     @Override
     public int getInt(int columnIndex) {
-        return Unsafe.getUnsafe().getInt(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getInt(addressOfColumn(columnIndex));
     }
 
     @Override
     public long getLong(int columnIndex) {
-        return Unsafe.getUnsafe().getLong(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getLong(addressOfColumn(columnIndex));
     }
 
     @Override
@@ -186,21 +186,21 @@ final class FastMapRecord implements MapRecord {
 
     @Override
     public short getShort(int columnIndex) {
-        return Unsafe.getUnsafe().getShort(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getShort(addressOfColumn(columnIndex));
     }
 
     @Override
     public char getChar(int columnIndex) {
-        return Unsafe.getUnsafe().getChar(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getChar(addressOfColumn(columnIndex));
     }
 
     @Override
     public void getLong256(int columnIndex, CharSink sink) {
         long address = addressOfColumn(columnIndex);
-        final long a = Unsafe.getUnsafe().getLong(address);
-        final long b = Unsafe.getUnsafe().getLong(address + Long.BYTES);
-        final long c = Unsafe.getUnsafe().getLong(address + Long.BYTES * 2);
-        final long d = Unsafe.getUnsafe().getLong(address + Long.BYTES * 3);
+        final long a = Unsafe.UNSAFE.getLong(address);
+        final long b = Unsafe.UNSAFE.getLong(address + Long.BYTES);
+        final long c = Unsafe.UNSAFE.getLong(address + Long.BYTES * 2);
+        final long d = Unsafe.UNSAFE.getLong(address + Long.BYTES * 3);
         Numbers.appendLong256(a, b, c, d, sink);
     }
 
@@ -213,10 +213,10 @@ final class FastMapRecord implements MapRecord {
     private Long256 getLong256Generic(Long256Impl[] array, int columnIndex) {
         long address = addressOfColumn(columnIndex);
         Long256Impl long256 = array[columnIndex];
-        long256.setLong0(Unsafe.getUnsafe().getLong(address));
-        long256.setLong1(Unsafe.getUnsafe().getLong(address + Long.BYTES));
-        long256.setLong2(Unsafe.getUnsafe().getLong(address + Long.BYTES * 2));
-        long256.setLong3(Unsafe.getUnsafe().getLong(address + Long.BYTES * 3));
+        long256.setLong0(Unsafe.UNSAFE.getLong(address));
+        long256.setLong1(Unsafe.UNSAFE.getLong(address + Long.BYTES));
+        long256.setLong2(Unsafe.UNSAFE.getLong(address + Long.BYTES * 2));
+        long256.setLong3(Unsafe.UNSAFE.getLong(address + Long.BYTES * 3));
         return long256;
     }
 
@@ -234,10 +234,10 @@ final class FastMapRecord implements MapRecord {
     @Override
     public void getStr(int columnIndex, CharSink sink) {
         long address = addressOfColumn(columnIndex);
-        int len = Unsafe.getUnsafe().getInt(address);
+        int len = Unsafe.UNSAFE.getInt(address);
         address += 4;
         for (int i = 0; i < len; i++) {
-            sink.put(Unsafe.getUnsafe().getChar(address));
+            sink.put(Unsafe.UNSAFE.getChar(address));
             address += 2;
         }
     }
@@ -249,7 +249,7 @@ final class FastMapRecord implements MapRecord {
 
     @Override
     public int getStrLen(int columnIndex) {
-        return Unsafe.getUnsafe().getInt(addressOfColumn(columnIndex));
+        return Unsafe.UNSAFE.getInt(addressOfColumn(columnIndex));
     }
 
     @Override
@@ -278,7 +278,7 @@ final class FastMapRecord implements MapRecord {
             return address1;
         }
 
-        return Unsafe.getUnsafe().getInt(address2 + (index - split - 1) * 4) + address0;
+        return Unsafe.UNSAFE.getInt(address2 + (index - split - 1) * 4) + address0;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
@@ -339,7 +339,7 @@ final class FastMapRecord implements MapRecord {
 
     private CharSequence getStr0(int index, DirectCharSequence cs) {
         long address = addressOfColumn(index);
-        int len = Unsafe.getUnsafe().getInt(address);
+        int len = Unsafe.UNSAFE.getInt(address);
         return len == TableUtils.NULL_LEN ? null : cs.of(address + 4, address + 4 + len * 2);
     }
 
@@ -355,7 +355,7 @@ final class FastMapRecord implements MapRecord {
 
         @Override
         public byte byteAt(long index) {
-            return Unsafe.getUnsafe().getByte(address + index);
+            return Unsafe.UNSAFE.getByte(address + index);
         }
 
         @Override

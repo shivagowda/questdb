@@ -81,7 +81,7 @@ public class NewLineProtoParser implements Closeable {
     public ParseResult parseMeasurement(long bufHi) {
         assert bufAt != 0 && bufHi >= bufAt;
         while (bufAt < bufHi) {
-            byte b = Unsafe.getUnsafe().getByte(bufAt);
+            byte b = Unsafe.UNSAFE.getByte(bufAt);
             boolean endOfLine = false;
             switch (b) {
                 case (byte) '\n':
@@ -119,11 +119,11 @@ public class NewLineProtoParser implements Closeable {
                     }
                     nEscapedChars++;
                     bufAt++;
-                    b = Unsafe.getUnsafe().getByte(bufAt);
+                    b = Unsafe.UNSAFE.getByte(bufAt);
 
                 default:
                     if (nEscapedChars > 0) {
-                        Unsafe.getUnsafe().putByte(bufAt - nEscapedChars, b);
+                        Unsafe.UNSAFE.putByte(bufAt - nEscapedChars, b);
                     }
                     bufAt++;
                     break;
@@ -147,7 +147,7 @@ public class NewLineProtoParser implements Closeable {
     public ParseResult skipMeasurement(long bufHi) {
         assert bufAt != 0 && bufHi >= bufAt;
         while (bufAt < bufHi) {
-            byte b = Unsafe.getUnsafe().getByte(bufAt);
+            byte b = Unsafe.UNSAFE.getByte(bufAt);
             if (b == (byte) '\n' || b == (byte) '\r') {
                 return ParseResult.MEASUREMENT_COMPLETE;
             }

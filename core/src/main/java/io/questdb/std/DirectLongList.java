@@ -50,7 +50,7 @@ public class DirectLongList implements Mutable, Closeable {
     public void add(long x) {
         ensureCapacity();
         assert pos < limit;
-        Unsafe.getUnsafe().putLong(pos, x);
+        Unsafe.UNSAFE.putLong(pos, x);
         pos += Long.BYTES;
     }
 
@@ -59,7 +59,7 @@ public class DirectLongList implements Mutable, Closeable {
         if (limit - pos < thatCapacity) {
             extend(this.capacity + thatCapacity - (limit - pos));
         }
-        Unsafe.getUnsafe().copyMemory(that.start, this.pos, thatCapacity);
+        Unsafe.UNSAFE.copyMemory(that.start, this.pos, thatCapacity);
         this.pos += thatCapacity;
     }
 
@@ -74,7 +74,7 @@ public class DirectLongList implements Mutable, Closeable {
             }
 
             long mid = (low + high) >>> 1;
-            long midVal = Unsafe.getUnsafe().getLong(start + (mid << 3));
+            long midVal = Unsafe.UNSAFE.getLong(start + (mid << 3));
 
             if (midVal < v)
                 low = mid + 1;
@@ -104,7 +104,7 @@ public class DirectLongList implements Mutable, Closeable {
     }
 
     public long get(long p) {
-        return Unsafe.getUnsafe().getLong(start + (p << 3));
+        return Unsafe.UNSAFE.getLong(start + (p << 3));
     }
 
     public long scanSearch(long v, long low, long high) {
@@ -122,7 +122,7 @@ public class DirectLongList implements Mutable, Closeable {
 
     public void set(long p, long v) {
         assert p >= 0 && p <= (limit - start) >> 3;
-        Unsafe.getUnsafe().putLong(start + (p << 3), v);
+        Unsafe.UNSAFE.putLong(start + (p << 3), v);
     }
 
     public void setPos(long p) {
@@ -148,7 +148,7 @@ public class DirectLongList implements Mutable, Closeable {
     }
 
     public void zero(long v) {
-        Unsafe.getUnsafe().setMemory(start, pos - start, (byte) v);
+        Unsafe.UNSAFE.setMemory(start, pos - start, (byte) v);
     }
 
     void ensureCapacity() {

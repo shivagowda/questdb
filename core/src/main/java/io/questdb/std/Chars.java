@@ -42,19 +42,19 @@ public final class Chars {
 
     public static void asciiCopyTo(char[] chars, int start, int len, long dest) {
         for (int i = 0; i < len; i++) {
-            Unsafe.getUnsafe().putByte(dest + i, (byte) chars[i + start]);
+            Unsafe.UNSAFE.putByte(dest + i, (byte) chars[i + start]);
         }
     }
 
     public static void asciiStrCpy(final CharSequence value, final int len, final long address) {
         for (int i = 0; i < len; i++) {
-            Unsafe.getUnsafe().putByte(address + i, (byte) value.charAt(i));
+            Unsafe.UNSAFE.putByte(address + i, (byte) value.charAt(i));
         }
     }
 
     public static void asciiStrCpy(final CharSequence value, int lo, final int len, final long address) {
         for (int i = 0; i < len; i++) {
-            Unsafe.getUnsafe().putByte(address + i, (byte) value.charAt(lo + i));
+            Unsafe.UNSAFE.putByte(address + i, (byte) value.charAt(lo + i));
         }
     }
 
@@ -633,7 +633,7 @@ public final class Chars {
     public static boolean utf8Decode(long lo, long hi, CharSink sink) {
         long p = lo;
         while (p < hi) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
             if (b < 0) {
                 int n = utf8DecodeMultiByte(p, hi, b, sink);
                 if (n == -1) {
@@ -677,7 +677,7 @@ public final class Chars {
         long p = lo;
 
         while (true) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
 
             if (b == 0) {
                 break;
@@ -716,9 +716,9 @@ public final class Chars {
             return utf8error();
         }
 
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
-        byte b3 = Unsafe.getUnsafe().getByte(lo + 2);
-        byte b4 = Unsafe.getUnsafe().getByte(lo + 3);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
+        byte b3 = Unsafe.UNSAFE.getByte(lo + 2);
+        byte b4 = Unsafe.UNSAFE.getByte(lo + 3);
 
         return utf8Decode4Bytes0(b, sink, b2, b3, b4);
     }
@@ -742,17 +742,17 @@ public final class Chars {
             return utf8error();
         }
 
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
         if (b2 == 0) {
             return utf8error();
         }
 
-        byte b3 = Unsafe.getUnsafe().getByte(lo + 2);
+        byte b3 = Unsafe.UNSAFE.getByte(lo + 2);
         if (b3 == 0) {
             return utf8error();
         }
 
-        byte b4 = Unsafe.getUnsafe().getByte(lo + 3);
+        byte b4 = Unsafe.UNSAFE.getByte(lo + 3);
         if (b4 == 0) {
             return utf8error();
         }
@@ -765,19 +765,19 @@ public final class Chars {
             return utf8error();
         }
 
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
-        byte b3 = Unsafe.getUnsafe().getByte(lo + 2);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
+        byte b3 = Unsafe.UNSAFE.getByte(lo + 2);
 
         return utf8Decode3Byte0(b1, sink, b2, b3);
     }
 
     private static int utf8Decode3BytesZ(long lo, int b1, CharSink sink) {
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
         if (b2 == 0) {
             return utf8error();
         }
 
-        byte b3 = Unsafe.getUnsafe().getByte(lo + 2);
+        byte b3 = Unsafe.UNSAFE.getByte(lo + 2);
         if (b3 == 0) {
             return utf8error();
         }
@@ -804,7 +804,7 @@ public final class Chars {
             return utf8error();
         }
 
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
         if (isNotContinuation(b2)) {
             return utf8error();
         }
@@ -814,7 +814,7 @@ public final class Chars {
     }
 
     private static int utf8Decode2BytesZ(long lo, int b1, CharSink sink) {
-        byte b2 = Unsafe.getUnsafe().getByte(lo + 1);
+        byte b2 = Unsafe.UNSAFE.getByte(lo + 1);
         if (b2 == 0) {
             return utf8error();
         }

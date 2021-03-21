@@ -215,7 +215,7 @@ public class LineProtoLexer implements Mutable, Closeable {
 
         while (p < hi && !partialComplete()) {
 
-            final byte b = Unsafe.getUnsafe().getByte(p);
+            final byte b = Unsafe.UNSAFE.getByte(p);
 
             if (skipLine) {
                 doSkipLine(b);
@@ -301,7 +301,7 @@ public class LineProtoLexer implements Mutable, Closeable {
             long errorLen = utf8ErrorPos - utf8ErrorTop;
             if (errorLen > 1) {
                 dstPos = utf8ErrorTop - 1;
-                n = Chars.utf8DecodeMultiByte(utf8ErrorTop, utf8ErrorPos, Unsafe.getUnsafe().getByte(utf8ErrorTop), sink);
+                n = Chars.utf8DecodeMultiByte(utf8ErrorTop, utf8ErrorPos, Unsafe.UNSAFE.getByte(utf8ErrorTop), sink);
             }
 
             if (n == -1 && errorLen > 3) {
@@ -310,7 +310,7 @@ public class LineProtoLexer implements Mutable, Closeable {
             }
 
             if (n == -1 && ++lo < hi) {
-                b = Unsafe.getUnsafe().getByte(lo);
+                b = Unsafe.UNSAFE.getByte(lo);
             } else {
                 break;
             }
@@ -352,7 +352,7 @@ public class LineProtoLexer implements Mutable, Closeable {
 
         @Override
         public char charAt(int index) {
-            return Unsafe.getUnsafe().getChar(lo + index * 2L);
+            return Unsafe.UNSAFE.getChar(lo + index * 2L);
         }
     }
 
@@ -363,7 +363,7 @@ public class LineProtoLexer implements Mutable, Closeable {
             if (dstPos == bufferHi) {
                 extend();
             }
-            Unsafe.getUnsafe().putChar(dstPos, c);
+            Unsafe.UNSAFE.putChar(dstPos, c);
             return this;
         }
 
@@ -379,7 +379,7 @@ public class LineProtoLexer implements Mutable, Closeable {
                 throw LineProtoException.INSTANCE;
             }
             long buf = Unsafe.malloc(capacity);
-            Unsafe.getUnsafe().copyMemory(buffer, buf, (dstPos - buffer));
+            Unsafe.UNSAFE.copyMemory(buffer, buf, (dstPos - buffer));
             Unsafe.free(buffer, bufferHi - buffer);
 
             long offset = dstTop - buffer;
@@ -404,7 +404,7 @@ public class LineProtoLexer implements Mutable, Closeable {
 
         @Override
         public char charAt(int index) {
-            return Unsafe.getUnsafe().getChar(dstTop + index * 2L);
+            return Unsafe.UNSAFE.getChar(dstTop + index * 2L);
         }
     }
 }

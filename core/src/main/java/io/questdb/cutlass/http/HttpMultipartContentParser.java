@@ -126,7 +126,7 @@ public class HttpMultipartContentParser implements Closeable, Mutable {
                     }
                     break;
                 case PRE_HEADERS:
-                    switch (Unsafe.getUnsafe().getByte(ptr)) {
+                    switch (Unsafe.UNSAFE.getByte(ptr)) {
                         case '\n':
                             state = HEADERS;
                             // fall through
@@ -145,7 +145,7 @@ public class HttpMultipartContentParser implements Closeable, Mutable {
                     }
                     break;
                 case START_PRE_HEADERS:
-                    switch (Unsafe.getUnsafe().getByte(ptr)) {
+                    switch (Unsafe.UNSAFE.getByte(ptr)) {
                         case '\n':
                             state = START_HEADERS;
                             // fall through
@@ -177,7 +177,7 @@ public class HttpMultipartContentParser implements Closeable, Mutable {
                     state = BODY;
                     break;
                 case BODY:
-                    byte b = Unsafe.getUnsafe().getByte(ptr++);
+                    byte b = Unsafe.UNSAFE.getByte(ptr++);
                     if (b == boundaryByte) {
                         boundaryPtr = 1;
                         switch (matchBoundary(ptr, hi)) {
@@ -255,7 +255,7 @@ public class HttpMultipartContentParser implements Closeable, Mutable {
         int ptr = boundaryPtr;
 
         while (lo < hi && ptr < boundaryLen) {
-            if (Unsafe.getUnsafe().getByte(lo++) != boundary.byteAt(ptr++)) {
+            if (Unsafe.UNSAFE.getByte(lo++) != boundary.byteAt(ptr++)) {
                 return BOUNDARY_NO_MATCH;
             }
         }

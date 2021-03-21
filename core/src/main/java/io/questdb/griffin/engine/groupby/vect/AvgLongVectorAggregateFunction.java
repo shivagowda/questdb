@@ -93,8 +93,8 @@ public class AvgLongVectorAggregateFunction extends DoubleFunction implements Ve
         // although the final values are double, avg() calculates sum and count for longs
         // double is derived at the very end. The initial values need to be set
         // correctly with long sum and count in mind.
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
     }
 
     @Override

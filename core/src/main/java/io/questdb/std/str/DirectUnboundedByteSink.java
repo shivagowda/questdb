@@ -54,7 +54,7 @@ public class DirectUnboundedByteSink extends AbstractCharSink {
 
     @Override
     public CharSink put(char c) {
-        Unsafe.getUnsafe().putByte(_wptr++, (byte) c);
+        Unsafe.UNSAFE.putByte(_wptr++, (byte) c);
         return this;
     }
 
@@ -69,7 +69,7 @@ public class DirectUnboundedByteSink extends AbstractCharSink {
     public String toString() {
         CharSink b = Misc.getThreadLocalBuilder();
         for (long p = address, hi = _wptr; p < hi; p++) {
-            b.put((char) Unsafe.getUnsafe().getByte(p));
+            b.put((char) Unsafe.UNSAFE.getByte(p));
         }
         return b.toString();
     }

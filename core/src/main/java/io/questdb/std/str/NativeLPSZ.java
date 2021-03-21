@@ -41,14 +41,14 @@ public class NativeLPSZ extends AbstractCharSequence {
 
     @Override
     public char charAt(int index) {
-        return (char) Unsafe.getUnsafe().getByte(address + index);
+        return (char) Unsafe.UNSAFE.getByte(address + index);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     public NativeLPSZ of(long address) {
         this.address = address;
         long p = address;
-        while (Unsafe.getUnsafe().getByte(p++) != 0) ;
+        while (Unsafe.UNSAFE.getByte(p++) != 0) ;
         this.len = (int) (p - address - 1);
         return this;
     }

@@ -92,7 +92,7 @@ public class LogRecordSink extends AbstractCharSink implements Closeable {
     @Override
     public CharSink put(char c) {
         if (_wptr < lim) {
-            Unsafe.getUnsafe().putByte(_wptr++, (byte) c);
+            Unsafe.UNSAFE.putByte(_wptr++, (byte) c);
         }
         return this;
     }
@@ -110,7 +110,7 @@ public class LogRecordSink extends AbstractCharSink implements Closeable {
     public String toString() {
         StringBuilder b = new StringBuilder();
         for (long p = address, hi = _wptr; p < hi; p++) {
-            b.append((char) Unsafe.getUnsafe().getByte(p));
+            b.append((char) Unsafe.UNSAFE.getByte(p));
         }
         return b.toString();
     }

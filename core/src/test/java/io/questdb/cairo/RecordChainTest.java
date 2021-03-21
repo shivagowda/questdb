@@ -157,12 +157,12 @@ public class RecordChainTest extends AbstractCairoTest {
                 o = chain.put(rec, o);
 
                 // out of band update of column
-                Unsafe.getUnsafe().putInt(chain.addressOf(chain.getOffsetOfColumn(o, 1)), 55);
+                Unsafe.UNSAFE.putInt(chain.addressOf(chain.getOffsetOfColumn(o, 1)), 55);
 
                 cols[0] = 110;
                 cols[2] = 210;
                 o = chain.put(rec, o);
-                Unsafe.getUnsafe().putInt(chain.getAddress(o, 1), 66);
+                Unsafe.UNSAFE.putInt(chain.getAddress(o, 1), 66);
 
                 AbstractCairoTest.sink.clear();
                 chain.toTop();

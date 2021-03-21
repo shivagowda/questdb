@@ -60,7 +60,7 @@ public class DirectCharSink extends AbstractCharSink implements CharSequence, Cl
 
     @Override
     public char charAt(int index) {
-        return Unsafe.getUnsafe().getChar(ptr + index * 2L);
+        return Unsafe.UNSAFE.getChar(ptr + index * 2L);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DirectCharSink extends AbstractCharSink implements CharSequence, Cl
         }
 
         for (int i = 0; i < l; i++) {
-            Unsafe.getUnsafe().putChar(lo + i * 2, cs.charAt(i));
+            Unsafe.UNSAFE.putChar(lo + i * 2, cs.charAt(i));
         }
         this.lo += l2;
         return this;
@@ -93,7 +93,7 @@ public class DirectCharSink extends AbstractCharSink implements CharSequence, Cl
         }
 
         for (int i = 0; i < len; i++) {
-            Unsafe.getUnsafe().putChar(lo + i * 2, chars[i + start]);
+            Unsafe.UNSAFE.putChar(lo + i * 2, chars[i + start]);
         }
 
         this.lo += l2;
@@ -105,7 +105,7 @@ public class DirectCharSink extends AbstractCharSink implements CharSequence, Cl
         if (lo == hi) {
             resize(this.capacity * 2);
         }
-        Unsafe.getUnsafe().putChar(lo, c);
+        Unsafe.UNSAFE.putChar(lo, c);
         lo += 2;
         return this;
     }
@@ -119,7 +119,7 @@ public class DirectCharSink extends AbstractCharSink implements CharSequence, Cl
     private void resize(int cap) {
         long temp = Unsafe.malloc(cap);
         int len = (int) (lo - ptr);
-        Unsafe.getUnsafe().copyMemory(ptr, temp, len);
+        Unsafe.UNSAFE.copyMemory(ptr, temp, len);
         Unsafe.free(ptr, capacity);
 
         this.ptr = temp;

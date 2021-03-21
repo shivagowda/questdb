@@ -172,7 +172,7 @@ public class CairoEngine implements Closeable, WriterSource {
 
     public long getNextTableId() {
         long next;
-        long x = Unsafe.getUnsafe().getLong(tableIndexMem);
+        long x = Unsafe.UNSAFE.getLong(tableIndexMem);
         do {
             next = x;
             x = Os.compareAndSwap(tableIndexMem, next, next + 1);
@@ -362,7 +362,7 @@ public class CairoEngine implements Closeable, WriterSource {
     // This is not thread safe way to reset table ID back to 0
     // It is useful for testing only
     public void resetTableId() {
-        Unsafe.getUnsafe().putLong(tableIndexMem, 0);
+        Unsafe.UNSAFE.putLong(tableIndexMem, 0);
     }
 
     public void unlock(

@@ -209,7 +209,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     }
 
     public static long getLongUnsafe(long address) {
-        return Numbers.bswap(Unsafe.getUnsafe().getLong(address));
+        return Numbers.bswap(Unsafe.UNSAFE.getLong(address));
     }
 
     public static short getShort(long address, long msgLimit, CharSequence errorMessage) throws BadProtocolException {
@@ -225,7 +225,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
             long limit,
             CharSequence errorMessage
     ) throws BadProtocolException {
-        long len = Unsafe.getUnsafe().getByte(x) == 0 ? x : getStringLengthTedious(x, limit);
+        long len = Unsafe.UNSAFE.getByte(x) == 0 ? x : getStringLengthTedious(x, limit);
         if (len > -1) {
             return len;
         }
@@ -237,7 +237,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     public static long getStringLengthTedious(long x, long limit) {
         // calculate length
         for (long i = x; i < limit; i++) {
-            if (Unsafe.getUnsafe().getByte(i) == 0) {
+            if (Unsafe.UNSAFE.getByte(i) == 0) {
                 return i;
             }
         }
@@ -245,15 +245,15 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     }
 
     public static void putInt(long address, int value) {
-        Unsafe.getUnsafe().putInt(address, Numbers.bswap(value));
+        Unsafe.UNSAFE.putInt(address, Numbers.bswap(value));
     }
 
     public static void putLong(long address, long value) {
-        Unsafe.getUnsafe().putLong(address, Numbers.bswap(value));
+        Unsafe.UNSAFE.putLong(address, Numbers.bswap(value));
     }
 
     public static void putShort(long address, short value) {
-        Unsafe.getUnsafe().putShort(address, Numbers.bswap(value));
+        Unsafe.UNSAFE.putShort(address, Numbers.bswap(value));
     }
 
     @Override
@@ -371,7 +371,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
                 .$(", len=").$(len)
                 .$(']').$();
 
-        Unsafe.getUnsafe().copyMemory(
+        Unsafe.UNSAFE.copyMemory(
                 recvBuffer + readOffsetBeforeParse,
                 recvBuffer,
                 len
@@ -455,11 +455,11 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     }
 
     private static int getIntUnsafe(long address) {
-        return Numbers.bswap(Unsafe.getUnsafe().getInt(address));
+        return Numbers.bswap(Unsafe.UNSAFE.getInt(address));
     }
 
     private static short getShortUnsafe(long address) {
-        return Numbers.bswap(Unsafe.getUnsafe().getShort(address));
+        return Numbers.bswap(Unsafe.UNSAFE.getShort(address));
     }
 
     private static void ensureValueLength(int required, int valueLen) throws BadProtocolException {
@@ -499,7 +499,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     private static void setupBindVariables(long lo, IntList bindVariableTypes, int count) {
         bindVariableTypes.setPos(count);
         for (int i = 0; i < count; i++) {
-            bindVariableTypes.setQuick(i, Unsafe.getUnsafe().getInt(lo + i * 4L));
+            bindVariableTypes.setQuick(i, Unsafe.UNSAFE.getInt(lo + i * 4L));
         }
     }
 
@@ -1186,7 +1186,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
             return;
         }
 
-        final byte type = Unsafe.getUnsafe().getByte(address);
+        final byte type = Unsafe.UNSAFE.getByte(address);
         final int msgLen = getIntUnsafe(address + 1);
         LOG.debug()
                 .$("received msg [type=").$((char) type)
@@ -1540,7 +1540,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
     }
 
     private void processClose(long lo, long msgLimit) throws BadProtocolException {
-        final byte type = Unsafe.getUnsafe().getByte(lo);
+        final byte type = Unsafe.UNSAFE.getByte(lo);
         switch (type) {
             case 'S':
                 lo = lo + 1;
@@ -2002,7 +2002,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
             if (cs != null && (len = cs.length()) > 0) {
                 ensureCapacity(len);
                 for (int i = 0; i < len; i++) {
-                    Unsafe.getUnsafe().putByte(sendBufferPtr + i, (byte) cs.charAt(i));
+                    Unsafe.UNSAFE.putByte(sendBufferPtr + i, (byte) cs.charAt(i));
                 }
                 sendBufferPtr += len;
             }
@@ -2012,7 +2012,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
         @Override
         public CharSink put(char c) {
             ensureCapacity(Byte.BYTES);
-            Unsafe.getUnsafe().putByte(sendBufferPtr++, (byte) c);
+            Unsafe.UNSAFE.putByte(sendBufferPtr++, (byte) c);
             return this;
         }
 
@@ -2026,7 +2026,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
 
         public CharSink put(byte b) {
             ensureCapacity(Byte.BYTES);
-            Unsafe.getUnsafe().putByte(sendBufferPtr++, b);
+            Unsafe.UNSAFE.putByte(sendBufferPtr++, b);
             return this;
         }
 
@@ -2041,7 +2041,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
                 putInt(sendBufferPtr, (int) len);
                 sendBufferPtr += Integer.BYTES;
                 for (long x = 0; x < len; x++) {
-                    Unsafe.getUnsafe().putByte(sendBufferPtr + x, sequence.byteAt(x));
+                    Unsafe.UNSAFE.putByte(sendBufferPtr + x, sequence.byteAt(x));
                 }
                 sendBufferPtr += len;
             }
@@ -2054,7 +2054,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
         }
 
         public void putIntUnsafe(long offset, int value) {
-            Unsafe.getUnsafe().putInt(sendBufferPtr + offset, value);
+            Unsafe.UNSAFE.putInt(sendBufferPtr + offset, value);
         }
 
         public void putLen(long start) {
@@ -2067,13 +2067,13 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
 
         public void putNetworkDouble(double value) {
             ensureCapacity(Double.BYTES);
-            Unsafe.getUnsafe().putDouble(sendBufferPtr, Double.longBitsToDouble(Numbers.bswap(Double.doubleToLongBits(value))));
+            Unsafe.UNSAFE.putDouble(sendBufferPtr, Double.longBitsToDouble(Numbers.bswap(Double.doubleToLongBits(value))));
             sendBufferPtr += Double.BYTES;
         }
 
         public void putNetworkFloat(float value) {
             ensureCapacity(Float.BYTES);
-            Unsafe.getUnsafe().putFloat(sendBufferPtr, Float.intBitsToFloat(Numbers.bswap(Float.floatToIntBits(value))));
+            Unsafe.UNSAFE.putFloat(sendBufferPtr, Float.intBitsToFloat(Numbers.bswap(Float.floatToIntBits(value))));
             sendBufferPtr += Float.BYTES;
         }
 
@@ -2108,7 +2108,7 @@ public class PGConnectionContext implements IOContext, Mutable, WriterSource {
         void encodeUtf8Z(CharSequence value) {
             encodeUtf8(value);
             ensureCapacity(Byte.BYTES);
-            Unsafe.getUnsafe().putByte(sendBufferPtr++, (byte) 0);
+            Unsafe.UNSAFE.putByte(sendBufferPtr++, (byte) 0);
         }
 
         private void ensureCapacity(int size) {

@@ -550,8 +550,8 @@ public class TableWriter implements Closeable {
                     }
 
                     attachPartitionCheckFilesMatchMetadata(ff, path, getMetadata(), partitionSize);
-                    long minPartitionTimestamp = Unsafe.getUnsafe().getLong(tempMem16b);
-                    long maxPartitionTimestamp = Unsafe.getUnsafe().getLong(tempMem16b + 8);
+                    long minPartitionTimestamp = Unsafe.UNSAFE.getLong(tempMem16b);
+                    long maxPartitionTimestamp = Unsafe.UNSAFE.getLong(tempMem16b + 8);
 
                     assert timestamp <= minPartitionTimestamp && minPartitionTimestamp <= maxPartitionTimestamp;
 
@@ -1141,9 +1141,9 @@ public class TableWriter implements Closeable {
                 case ColumnType.BINARY:
                     assert mem2 != null;
                     readOffsetBytes(ff, mem2, actualPosition, buf);
-                    offset = Unsafe.getUnsafe().getLong(buf);
+                    offset = Unsafe.UNSAFE.getLong(buf);
                     readBytes(ff, mem1, buf, Long.BYTES, offset, "Cannot read length, fd=");
-                    len = Unsafe.getUnsafe().getLong(buf);
+                    len = Unsafe.UNSAFE.getLong(buf);
                     mem1Size = len == -1 ? offset + Long.BYTES : offset + len + Long.BYTES;
                     if (ensureFileSize) {
                         mem1.ensureFileSize(mem1.pageIndex(mem1Size));
@@ -1155,9 +1155,9 @@ public class TableWriter implements Closeable {
                 case ColumnType.STRING:
                     assert mem2 != null;
                     readOffsetBytes(ff, mem2, actualPosition, buf);
-                    offset = Unsafe.getUnsafe().getLong(buf);
+                    offset = Unsafe.UNSAFE.getLong(buf);
                     readBytes(ff, mem1, buf, Integer.BYTES, offset, "Cannot read length, fd=");
-                    len = Unsafe.getUnsafe().getInt(buf);
+                    len = Unsafe.UNSAFE.getInt(buf);
                     mem1Size = len == -1 ? offset + Integer.BYTES : offset + len * Character.BYTES + Integer.BYTES;
                     if (ensureFileSize) {
                         mem1.ensureFileSize(mem1.pageIndex(mem1Size));
@@ -1269,11 +1269,11 @@ public class TableWriter implements Closeable {
     }
 
     private static long getTimestampIndexRow(long timestampIndex, long indexRow) {
-        return Unsafe.getUnsafe().getLong(timestampIndex + indexRow * 16 + Long.BYTES);
+        return Unsafe.UNSAFE.getLong(timestampIndex + indexRow * 16 + Long.BYTES);
     }
 
     private static long getTimestampIndexValue(long timestampIndex, long indexRow) {
-        return Unsafe.getUnsafe().getLong(timestampIndex + indexRow * 16);
+        return Unsafe.UNSAFE.getLong(timestampIndex + indexRow * 16);
     }
 
     private static void configureNullSetters(ObjList<Runnable> nullers, int type, BigMem mem1, BigMem mem2) {
@@ -1608,7 +1608,7 @@ public class TableWriter implements Closeable {
         final long len = (srcHi - srcLo + 1) << shl;
         final long dst = MergeStruct.getDestFixedAddress(mergeStruct, columnIndex);
         final long offset = MergeStruct.getDestFixedAppendOffset(mergeStruct, columnIndex);
-        Unsafe.getUnsafe().copyMemory(src + (srcLo << shl), dst + offset, len);
+        Unsafe.UNSAFE.copyMemory(src + (srcLo << shl), dst + offset, len);
         MergeStruct.setDestFixedAppendOffset(mergeStruct, columnIndex, offset + len);
     }
 
@@ -1627,7 +1627,7 @@ public class TableWriter implements Closeable {
         final long dest = MergeStruct.getDestFixedAddress(mergeStruct, columnIndex) + destOffset;
         final long len = hi - lo;
         for (long l = 0; l < len; l += 16) {
-            Unsafe.getUnsafe().putLong(dest + l / 2, Unsafe.getUnsafe().getLong(start + l));
+            Unsafe.UNSAFE.putLong(dest + l / 2, Unsafe.UNSAFE.getLong(start + l));
         }
         MergeStruct.setDestFixedAppendOffset(mergeStruct, columnIndex, destOffset + len / 2);
     }
@@ -1636,7 +1636,7 @@ public class TableWriter implements Closeable {
         final long offset = MergeStruct.getDestFixedAppendOffset(mergeStruct, columnIndex);
         final long dst = MergeStruct.getDestFixedAddress(mergeStruct, columnIndex) + offset;
         for (long l = 0; l < dataOOMergeIndexLen; l++) {
-            Unsafe.getUnsafe().putLong(
+            Unsafe.UNSAFE.putLong(
                     dst + l * Long.BYTES,
                     getTimestampIndexValue(dataOOMergeIndex, l)
             );
@@ -1832,7 +1832,7 @@ public class TableWriter implements Closeable {
             }
             MergeStruct.setSrcAddressFromOffset(mergeStruct, offset, dest);
             MergeStruct.setSrcAddressSizeFromOffset(mergeStruct, offset, srcLen);
-            Unsafe.getUnsafe().copyMemory(srcMem, dest, srcLen);
+            Unsafe.UNSAFE.copyMemory(srcMem, dest, srcLen);
         }
     }
 
@@ -1844,19 +1844,19 @@ public class TableWriter implements Closeable {
             long[] mergeStruct, int columnIndex, long indexLo,
             long indexHi
     ) {
-        final long lo = Unsafe.getUnsafe().getLong(srcFixed + indexLo * Long.BYTES);
+        final long lo = Unsafe.UNSAFE.getLong(srcFixed + indexLo * Long.BYTES);
         final long hi;
         if (indexHi + 1 == srcFixedSize / Long.BYTES) {
             hi = srcVarSize;
         } else {
-            hi = Unsafe.getUnsafe().getLong(srcFixed + (indexHi + 1) * Long.BYTES);
+            hi = Unsafe.UNSAFE.getLong(srcFixed + (indexHi + 1) * Long.BYTES);
         }
         // copy this before it changes
         final long offset = MergeStruct.getDestVarAppendOffset(mergeStruct, columnIndex);
         final long dest = MergeStruct.getDestVarAddress(mergeStruct, columnIndex) + offset;
         final long len = hi - lo;
         assert offset + len <= MergeStruct.getDestVarAddressSize(mergeStruct, columnIndex);
-        Unsafe.getUnsafe().copyMemory(srcVar + lo, dest, len);
+        Unsafe.UNSAFE.copyMemory(srcVar + lo, dest, len);
         MergeStruct.setDestVarAppendOffset(mergeStruct, columnIndex, offset + len);
         if (lo == offset) {
             copyFixedSizeCol(srcFixed, mergeStruct, columnIndex, indexLo, indexHi, 3);///tmp/junit5575360739858136984/dbRoot/x/1970-01-06
@@ -2031,7 +2031,7 @@ public class TableWriter implements Closeable {
                     if (n != Long.BYTES) {
                         throw CairoException.instance(Os.errno()).put("could not read timestamp value");
                     }
-                    return Unsafe.getUnsafe().getLong(tempMem16b);
+                    return Unsafe.UNSAFE.getLong(tempMem16b);
                 } finally {
                     ff.close(fd);
                 }
@@ -2104,7 +2104,7 @@ public class TableWriter implements Closeable {
         final long offset;
         if (columnType == ColumnType.STRING) {
             addr = ff.mmap(dataFd, lastValueOffset + Integer.BYTES, 0, Files.MAP_RO);
-            final int len = Unsafe.getUnsafe().getInt(addr + lastValueOffset);
+            final int len = Unsafe.UNSAFE.getInt(addr + lastValueOffset);
             ff.munmap(addr, lastValueOffset + Integer.BYTES);
             if (len < 1) {
                 offset = lastValueOffset + Integer.BYTES;
@@ -2114,7 +2114,7 @@ public class TableWriter implements Closeable {
         } else {
             // BINARY
             addr = ff.mmap(dataFd, lastValueOffset + Long.BYTES, 0, Files.MAP_RO);
-            final long len = Unsafe.getUnsafe().getLong(addr + lastValueOffset);
+            final long len = Unsafe.UNSAFE.getLong(addr + lastValueOffset);
             ff.munmap(addr, lastValueOffset + Long.BYTES);
             if (len < 1) {
                 offset = lastValueOffset + Long.BYTES;
@@ -2227,15 +2227,15 @@ public class TableWriter implements Closeable {
             final int bit = (int) (row >>> 63);
             // row number is "row" with high bit removed
             final long rr = row & ~(1L << 63);
-            Unsafe.getUnsafe().putLong(dstFix + l * Long.BYTES, destVarOffset);
-            long offset = Unsafe.getUnsafe().getLong(srcFix[bit] + rr * Long.BYTES);
+            Unsafe.UNSAFE.putLong(dstFix + l * Long.BYTES, destVarOffset);
+            long offset = Unsafe.UNSAFE.getLong(srcFix[bit] + rr * Long.BYTES);
             long addr = srcVar[bit] + offset;
-            long len = Unsafe.getUnsafe().getLong(addr);
+            long len = Unsafe.UNSAFE.getLong(addr);
             if (len > 0) {
-                Unsafe.getUnsafe().copyMemory(addr, destVar + destVarOffset, len + Long.BYTES);
+                Unsafe.UNSAFE.copyMemory(addr, destVar + destVarOffset, len + Long.BYTES);
                 destVarOffset += len + Long.BYTES;
             } else {
-                Unsafe.getUnsafe().putLong(destVar + destVarOffset, len);
+                Unsafe.UNSAFE.putLong(destVar + destVarOffset, len);
                 destVarOffset += Long.BYTES;
             }
         }
@@ -2268,15 +2268,15 @@ public class TableWriter implements Closeable {
             final int bit = (int) (row >>> 63);
             // row number is "row" with high bit removed
             final long rr = row & ~(1L << 63);
-            Unsafe.getUnsafe().putLong(dstFix + l * Long.BYTES, destVarOffset);
-            long offset = Unsafe.getUnsafe().getLong(srcFix[bit] + rr * Long.BYTES);
+            Unsafe.UNSAFE.putLong(dstFix + l * Long.BYTES, destVarOffset);
+            long offset = Unsafe.UNSAFE.getLong(srcFix[bit] + rr * Long.BYTES);
             long addr = srcVar[bit] + offset;
-            int len = Unsafe.getUnsafe().getInt(addr);
+            int len = Unsafe.UNSAFE.getInt(addr);
             if (len > 0) {
-                Unsafe.getUnsafe().copyMemory(addr, destVar + destVarOffset, (long) len * Character.BYTES + Integer.BYTES);
+                Unsafe.UNSAFE.copyMemory(addr, destVar + destVarOffset, (long) len * Character.BYTES + Integer.BYTES);
                 destVarOffset += (long) len * Character.BYTES + Integer.BYTES;
             } else {
-                Unsafe.getUnsafe().putInt(destVar + destVarOffset, len);
+                Unsafe.UNSAFE.putInt(destVar + destVarOffset, len);
                 destVarOffset += Integer.BYTES;
             }
         }
@@ -2499,7 +2499,7 @@ public class TableWriter implements Closeable {
                             if (ff.read(timestampFd, tempMem16b, Long.BYTES, (dataIndexMax - 1) * Long.BYTES) != Long.BYTES) {
                                 throw CairoException.instance(ff.errno()).put("could not read bottom 8 bytes from `").put(path).put('`');
                             }
-                            dataTimestampHi = Unsafe.getUnsafe().getLong(tempMem16b);
+                            dataTimestampHi = Unsafe.UNSAFE.getLong(tempMem16b);
                         }
 
                         // read the top value
@@ -2507,7 +2507,7 @@ public class TableWriter implements Closeable {
                             throw CairoException.instance(ff.errno()).put("could not read top 8 bytes from `").put(path).put('`');
                         }
 
-                        dataTimestampLo = Unsafe.getUnsafe().getLong(tempMem16b);
+                        dataTimestampLo = Unsafe.UNSAFE.getLong(tempMem16b);
 
                         LOG.debug()
                                 .$("read data top [dataTimestampLo=").microTime(dataTimestampLo)
@@ -2948,14 +2948,14 @@ public class TableWriter implements Closeable {
         final long indexStruct = Unsafe.malloc(TIMESTAMP_MERGE_ENTRY_BYTES * 2);
         long index = Unsafe.malloc(indexSize);
         for (long l = mergeDataLo; l <= mergeDataHi; l++) {
-            Unsafe.getUnsafe().putLong(index + (l - mergeDataLo) * TIMESTAMP_MERGE_ENTRY_BYTES, Unsafe.getUnsafe().getLong(src + l * Long.BYTES));
-            Unsafe.getUnsafe().putLong(index + (l - mergeDataLo) * TIMESTAMP_MERGE_ENTRY_BYTES + Long.BYTES, l | (1L << 63));
+            Unsafe.UNSAFE.putLong(index + (l - mergeDataLo) * TIMESTAMP_MERGE_ENTRY_BYTES, Unsafe.UNSAFE.getLong(src + l * Long.BYTES));
+            Unsafe.UNSAFE.putLong(index + (l - mergeDataLo) * TIMESTAMP_MERGE_ENTRY_BYTES + Long.BYTES, l | (1L << 63));
         }
 
-        Unsafe.getUnsafe().putLong(indexStruct, index);
-        Unsafe.getUnsafe().putLong(indexStruct + Long.BYTES, mergeDataHi - mergeDataLo + 1);
-        Unsafe.getUnsafe().putLong(indexStruct + 2 * Long.BYTES, mergedTimestamps + mergeOOOLo * 16);
-        Unsafe.getUnsafe().putLong(indexStruct + 3 * Long.BYTES, mergeOOOHi - mergeOOOLo + 1);
+        Unsafe.UNSAFE.putLong(indexStruct, index);
+        Unsafe.UNSAFE.putLong(indexStruct + Long.BYTES, mergeDataHi - mergeDataLo + 1);
+        Unsafe.UNSAFE.putLong(indexStruct + 2 * Long.BYTES, mergedTimestamps + mergeOOOLo * 16);
+        Unsafe.UNSAFE.putLong(indexStruct + 3 * Long.BYTES, mergeOOOHi - mergeOOOLo + 1);
         long result = Vect.mergeLongIndexesAsc(indexStruct, 2);
         Unsafe.free(index, indexSize);
         Unsafe.free(indexStruct, TIMESTAMP_MERGE_ENTRY_BYTES * 2);
@@ -3204,7 +3204,7 @@ public class TableWriter implements Closeable {
                     final long dataOffset = getVarColumnSize(
                             columnType,
                             dataFd,
-                            Unsafe.getUnsafe().getLong(
+                            Unsafe.UNSAFE.getLong(
                                     MergeStruct.getDestFixedAddress(mergeStruct, i)
                                             + MergeStruct.getDestFixedAppendOffset(mergeStruct, i)
                                             - Long.BYTES
@@ -3286,7 +3286,7 @@ public class TableWriter implements Closeable {
                     dataSize = getVarColumnSize(
                             columnType,
                             dataFd,
-                            Unsafe.getUnsafe().getLong(
+                            Unsafe.UNSAFE.getLong(
                                     MergeStruct.getSrcFixedAddress(mergeStruct, i)
                                             + MergeStruct.getSrcFixedAddressSize(mergeStruct, i)
                                             - Long.BYTES
@@ -3431,7 +3431,7 @@ public class TableWriter implements Closeable {
                         long size = MergeStruct.getDestFixedAddressSize(mergeStruct, i);
 
                         for (long o = MergeStruct.getIndexStartOffset(mergeStruct, i); o < size; o += Integer.BYTES) {
-                            w.add(Unsafe.getUnsafe().getInt(addr + o), o);
+                            w.add(Unsafe.UNSAFE.getInt(addr + o), o);
                         }
                     }
                 }
@@ -3597,7 +3597,7 @@ public class TableWriter implements Closeable {
                     LOG.info().$("Cannot read *todo* code. File seems to be truncated. Ignoring. [file=").$(path).$(']').$();
                     return -1;
                 }
-                return Unsafe.getUnsafe().getLong(tempMem16b);
+                return Unsafe.UNSAFE.getLong(tempMem16b);
             }
             return -1;
         } finally {
@@ -4181,7 +4181,7 @@ public class TableWriter implements Closeable {
         final long dest = MergeStruct.getDestFixedAddress(mergeStruct, columnIndex) + destOffset;
         final long len = hi - lo;
         for (long o = 0; o < len; o += Long.BYTES) {
-            Unsafe.getUnsafe().putLong(dest + o, Unsafe.getUnsafe().getLong(slo + o) - shift);
+            Unsafe.UNSAFE.putLong(dest + o, Unsafe.UNSAFE.getLong(slo + o) - shift);
         }
         MergeStruct.setDestFixedAppendOffset(mergeStruct, columnIndex, destOffset + len);
     }
@@ -4225,7 +4225,7 @@ public class TableWriter implements Closeable {
             long o1 = indexMem.getLong(row * Long.BYTES);
             long o2 = row + 1 < indexRowCount ? indexMem.getLong((row + 1) * Long.BYTES) : dataSize;
             long len = o2 - o1;
-            Unsafe.getUnsafe().copyMemory(srcDataAddr + o1, tgtDataAddr + offset, len);
+            Unsafe.UNSAFE.copyMemory(srcDataAddr + o1, tgtDataAddr + offset, len);
             tmpShuffleIndex.putLong(l * Long.BYTES, offset);
             offset += len;
         }
@@ -4474,7 +4474,7 @@ public class TableWriter implements Closeable {
     private void writeColumnTop(CharSequence name, long columnTop) {
         long fd = openAppend(path.concat(name).put(".top").$());
         try {
-            Unsafe.getUnsafe().putLong(tempMem16b, columnTop);
+            Unsafe.UNSAFE.putLong(tempMem16b, columnTop);
             if (ff.append(fd, tempMem16b, Long.BYTES) != Long.BYTES) {
                 throw CairoException.instance(Os.errno()).put("Cannot append ").put(path);
             }
@@ -4495,7 +4495,7 @@ public class TableWriter implements Closeable {
         try {
             long fd = openAppend(path.concat(TODO_FILE_NAME).$());
             try {
-                Unsafe.getUnsafe().putLong(tempMem16b, code);
+                Unsafe.UNSAFE.putLong(tempMem16b, code);
                 if (ff.append(fd, tempMem16b, 8) != 8) {
                     throw CairoException.instance(Os.errno()).put("Cannot write ").put(getTodoText(code)).put(" *todo*: ").put(path);
                 }
@@ -4874,7 +4874,7 @@ public class TableWriter implements Closeable {
 
         @Override
         public void handleTansientymbolCountChange(int symbolCount) {
-            Unsafe.getUnsafe().storeFence();
+            Unsafe.UNSAFE.storeFence();
             txFile.writeTransientSymbolCount(symColIndex, symbolCount);
         }
 

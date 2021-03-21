@@ -66,35 +66,35 @@ public abstract class AbstractRedBlackTree implements Mutable, Closeable {
     }
 
     protected static void setLeft(long blockAddress, long left) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_LEFT, left);
+        Unsafe.UNSAFE.putLong(blockAddress + O_LEFT, left);
     }
 
     protected static long rightOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_RIGHT);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_RIGHT);
     }
 
     protected static long leftOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_LEFT);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_LEFT);
     }
 
     protected static void setParent(long blockAddress, long parent) {
-        Unsafe.getUnsafe().putLong(blockAddress, parent);
+        Unsafe.UNSAFE.putLong(blockAddress, parent);
     }
 
     protected static long refOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_REF);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_REF);
     }
 
     protected static void setRef(long blockAddress, long recRef) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_REF, recRef);
+        Unsafe.UNSAFE.putLong(blockAddress + O_REF, recRef);
     }
 
     protected static void setRight(long blockAddress, long right) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_RIGHT, right);
+        Unsafe.UNSAFE.putLong(blockAddress + O_RIGHT, right);
     }
 
     protected static long parentOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress);
     }
 
     protected static long parent2Of(long blockAddress) {
@@ -102,11 +102,11 @@ public abstract class AbstractRedBlackTree implements Mutable, Closeable {
     }
 
     protected static void setColor(long blockAddress, byte colour) {
-        Unsafe.getUnsafe().putByte(blockAddress + O_COLOUR, colour);
+        Unsafe.UNSAFE.putByte(blockAddress + O_COLOUR, colour);
     }
 
     protected static byte colorOf(long blockAddress) {
-        return blockAddress == -1 ? BLACK : Unsafe.getUnsafe().getByte(blockAddress + O_COLOUR);
+        return blockAddress == -1 ? BLACK : Unsafe.UNSAFE.getByte(blockAddress + O_COLOUR);
     }
 
     protected static long successor(long current) {

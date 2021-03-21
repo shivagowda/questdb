@@ -107,7 +107,7 @@ public final class Net {
     public static void dump(long buffer, int len) {
         if (len > 0) {
             for (int i = 0; i < len; i++) {
-                Numbers.appendHex(StdoutSink.INSTANCE, Unsafe.getUnsafe().getByte(buffer + i) & 0xff);
+                Numbers.appendHex(StdoutSink.INSTANCE, Unsafe.UNSAFE.getByte(buffer + i) & 0xff);
             }
             StdoutSink.INSTANCE.put('\n');
             StdoutSink.INSTANCE.flush();
@@ -119,11 +119,11 @@ public final class Net {
     public native static void freeSockAddr(long sockaddr);
 
     public static long getMMsgBuf(long msgPtr) {
-        return Unsafe.getUnsafe().getLong(Unsafe.getUnsafe().getLong(msgPtr + MMSGHDR_BUFFER_ADDRESS_OFFSET));
+        return Unsafe.UNSAFE.getLong(Unsafe.UNSAFE.getLong(msgPtr + MMSGHDR_BUFFER_ADDRESS_OFFSET));
     }
 
     public static int getMMsgBufLen(long msgPtr) {
-        return Unsafe.getUnsafe().getInt(msgPtr + MMSGHDR_BUFFER_LENGTH_OFFSET);
+        return Unsafe.UNSAFE.getInt(msgPtr + MMSGHDR_BUFFER_LENGTH_OFFSET);
     }
 
     public native static int getPeerIP(long fd);

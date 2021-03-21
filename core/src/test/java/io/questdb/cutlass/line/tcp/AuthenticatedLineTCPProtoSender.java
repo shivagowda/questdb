@@ -65,10 +65,10 @@ public class AuthenticatedLineTCPProtoSender extends LineTCPProtoSender {
         // Send key id
         int n = 0;
         while (n < keyIdBytes.length) {
-            Unsafe.getUnsafe().putByte(buffer + n, keyIdBytes[n]);
+            Unsafe.UNSAFE.putByte(buffer + n, keyIdBytes[n]);
             n++;
         }
-        Unsafe.getUnsafe().putByte(buffer + n, (byte) '\n');
+        Unsafe.UNSAFE.putByte(buffer + n, (byte) '\n');
         n++;
         if (nf.send(fd, buffer, n) != n) {
             throw NetworkError.instance(nf.errno()).put("send error");
@@ -81,7 +81,7 @@ public class AuthenticatedLineTCPProtoSender extends LineTCPProtoSender {
             if (rc < 0) {
                 throw NetworkError.instance(nf.errno()).put("disconnected during authentication");
             }
-            byte b = Unsafe.getUnsafe().getByte(buffer + n);
+            byte b = Unsafe.UNSAFE.getByte(buffer + n);
             if (b == (byte) '\n') {
                 break;
             }
@@ -91,7 +91,7 @@ public class AuthenticatedLineTCPProtoSender extends LineTCPProtoSender {
         int sz = n;
         byte[] challengeBytes = new byte[sz];
         for (n = 0; n < sz; n++) {
-            challengeBytes[n] = Unsafe.getUnsafe().getByte(buffer + n);
+            challengeBytes[n] = Unsafe.UNSAFE.getByte(buffer + n);
         }
 
         // Send signature
@@ -106,9 +106,9 @@ public class AuthenticatedLineTCPProtoSender extends LineTCPProtoSender {
 
         byte[] signature = Base64.getEncoder().encode(rawSignature);
         for (n = 0; n < signature.length; n++) {
-            Unsafe.getUnsafe().putByte(buffer + n, signature[n]);
+            Unsafe.UNSAFE.putByte(buffer + n, signature[n]);
         }
-        Unsafe.getUnsafe().putByte(buffer + n, (byte) '\n');
+        Unsafe.UNSAFE.putByte(buffer + n, (byte) '\n');
         n++;
         if (nf.send(fd, buffer, n) != n) {
             throw NetworkError.instance(nf.errno()).put("send error");

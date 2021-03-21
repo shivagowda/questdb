@@ -48,7 +48,7 @@ final class FastMapValue implements MapValue {
 
     @Override
     public byte getByte(int index) {
-        return Unsafe.getUnsafe().getByte(address0(index));
+        return Unsafe.UNSAFE.getByte(address0(index));
     }
 
     @Override
@@ -58,32 +58,32 @@ final class FastMapValue implements MapValue {
 
     @Override
     public double getDouble(int index) {
-        return Unsafe.getUnsafe().getDouble(address0(index));
+        return Unsafe.UNSAFE.getDouble(address0(index));
     }
 
     @Override
     public float getFloat(int index) {
-        return Unsafe.getUnsafe().getFloat(address0(index));
+        return Unsafe.UNSAFE.getFloat(address0(index));
     }
 
     @Override
     public char getChar(int index) {
-        return Unsafe.getUnsafe().getChar(address0(index));
+        return Unsafe.UNSAFE.getChar(address0(index));
     }
 
     @Override
     public int getInt(int index) {
-        return Unsafe.getUnsafe().getInt(address0(index));
+        return Unsafe.UNSAFE.getInt(address0(index));
     }
 
     @Override
     public long getLong(int index) {
-        return Unsafe.getUnsafe().getLong(address0(index));
+        return Unsafe.UNSAFE.getLong(address0(index));
     }
 
     @Override
     public short getShort(int index) {
-        return Unsafe.getUnsafe().getShort(address0(index));
+        return Unsafe.UNSAFE.getShort(address0(index));
     }
 
     @Override
@@ -103,7 +103,7 @@ final class FastMapValue implements MapValue {
 
     @Override
     public void putByte(int index, byte value) {
-        Unsafe.getUnsafe().putByte(address0(index), value);
+        Unsafe.UNSAFE.putByte(address0(index), value);
     }
 
     @Override
@@ -113,68 +113,68 @@ final class FastMapValue implements MapValue {
 
     @Override
     public void putDouble(int index, double value) {
-        Unsafe.getUnsafe().putDouble(address0(index), value);
+        Unsafe.UNSAFE.putDouble(address0(index), value);
     }
 
     @Override
     public void putFloat(int index, float value) {
-        Unsafe.getUnsafe().putFloat(address0(index), value);
+        Unsafe.UNSAFE.putFloat(address0(index), value);
     }
 
     @Override
     public void putInt(int index, int value) {
-        Unsafe.getUnsafe().putInt(address0(index), value);
+        Unsafe.UNSAFE.putInt(address0(index), value);
     }
 
     @Override
     public void putLong(int index, long value) {
-        Unsafe.getUnsafe().putLong(address0(index), value);
+        Unsafe.UNSAFE.putLong(address0(index), value);
     }
 
     @Override
     public void addLong(int index, long value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putLong(p, Unsafe.getUnsafe().getLong(p) + value);
+        Unsafe.UNSAFE.putLong(p, Unsafe.UNSAFE.getLong(p) + value);
     }
 
     @Override
     public void addByte(int index, byte value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putByte(p, (byte) (Unsafe.getUnsafe().getByte(p) + value));
+        Unsafe.UNSAFE.putByte(p, (byte) (Unsafe.UNSAFE.getByte(p) + value));
     }
 
     @Override
     public void addShort(int index, short value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putShort(p, (short) (Unsafe.getUnsafe().getShort(p) + value));
+        Unsafe.UNSAFE.putShort(p, (short) (Unsafe.UNSAFE.getShort(p) + value));
     }
 
     @Override
     public void addInt(int index, int value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putInt(p, Unsafe.getUnsafe().getInt(p) + value);
+        Unsafe.UNSAFE.putInt(p, Unsafe.UNSAFE.getInt(p) + value);
     }
 
     @Override
     public void addDouble(int index, double value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putDouble(p, Unsafe.getUnsafe().getDouble(p) + value);
+        Unsafe.UNSAFE.putDouble(p, Unsafe.UNSAFE.getDouble(p) + value);
     }
 
     @Override
     public void addFloat(int index, float value) {
         final long p = address0(index);
-        Unsafe.getUnsafe().putFloat(p, Unsafe.getUnsafe().getFloat(p) + value);
+        Unsafe.UNSAFE.putFloat(p, Unsafe.UNSAFE.getFloat(p) + value);
     }
 
     @Override
     public void putShort(int index, short value) {
-        Unsafe.getUnsafe().putShort(address0(index), value);
+        Unsafe.UNSAFE.putShort(address0(index), value);
     }
 
     @Override
     public void putChar(int index, char value) {
-        Unsafe.getUnsafe().putChar(address0(index), value);
+        Unsafe.UNSAFE.putChar(address0(index), value);
     }
 
     @Override

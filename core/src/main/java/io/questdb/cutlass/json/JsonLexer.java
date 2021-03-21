@@ -125,7 +125,7 @@ public class JsonLexer implements Mutable, Closeable {
         int arrayDepth = this.arrayDepth;
 
         while (p < hi) {
-            char c = (char) Unsafe.getUnsafe().getByte(p++);
+            char c = (char) Unsafe.UNSAFE.getByte(p++);
 
             if (ignoreNext) {
                 ignoreNext = false;
@@ -301,7 +301,7 @@ public class JsonLexer implements Mutable, Closeable {
         }
 
         if (len > 0) {
-            Unsafe.getUnsafe().copyMemory(lo, cache + cacheSize, len);
+            Unsafe.UNSAFE.copyMemory(lo, cache + cacheSize, len);
             cacheSize += len;
         }
     }
@@ -312,7 +312,7 @@ public class JsonLexer implements Mutable, Closeable {
         }
         long ptr = Unsafe.malloc(n);
         if (cacheCapacity > 0) {
-            Unsafe.getUnsafe().copyMemory(cache, ptr, cacheSize);
+            Unsafe.UNSAFE.copyMemory(cache, ptr, cacheSize);
             Unsafe.free(cache, cacheCapacity);
         }
         cacheCapacity = n;
@@ -336,7 +336,7 @@ public class JsonLexer implements Mutable, Closeable {
         long lim = cache + cacheSize;
         int loOffset = 0;
         while (p < lim) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
             if (b < 0) {
                 int len = Chars.utf8DecodeMultiByte(p, lim, b, sink);
                 if (len != -1) {
@@ -374,7 +374,7 @@ public class JsonLexer implements Mutable, Closeable {
 
         p = lo + loOffset;
         while (p < hi) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
             if (b < 0) {
                 int len = Chars.utf8DecodeMultiByte(p, hi, b, sink);
                 if (len == -1) {

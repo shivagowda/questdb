@@ -32,7 +32,7 @@ public class TextUtil {
     public static void utf8Decode(long lo, long hi, CharSink sink) throws Utf8Exception {
         long p = lo;
         while (p < hi) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
             if (b < 0) {
                 int n = Chars.utf8DecodeMultiByte(p, hi, b, sink);
                 if (n == -1) {
@@ -52,7 +52,7 @@ public class TextUtil {
         int quoteCount = 0;
 
         while (p < hi) {
-            byte b = Unsafe.getUnsafe().getByte(p);
+            byte b = Unsafe.UNSAFE.getByte(p);
             if (b < 0) {
                 int n = Chars.utf8DecodeMultiByte(p, hi, b, sink);
                 if (n == -1) {

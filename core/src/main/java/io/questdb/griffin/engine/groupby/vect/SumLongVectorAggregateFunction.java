@@ -89,8 +89,8 @@ public class SumLongVectorAggregateFunction extends LongFunction implements Vect
 
     @Override
     public void initRosti(long pRosti) {
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
     }
 
     @Override

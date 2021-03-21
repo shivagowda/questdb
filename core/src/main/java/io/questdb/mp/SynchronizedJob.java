@@ -34,7 +34,7 @@ public abstract class SynchronizedJob implements Job {
 
     @Override
     public boolean run(int workerId) {
-        if (Unsafe.getUnsafe().compareAndSwapInt(this, LOCKED_OFFSET, 0, 1)) {
+        if (Unsafe.UNSAFE.compareAndSwapInt(this, LOCKED_OFFSET, 0, 1)) {
             try {
                 return runSerially();
             } finally {

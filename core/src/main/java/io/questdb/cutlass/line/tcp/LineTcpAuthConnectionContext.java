@@ -120,11 +120,11 @@ class LineTcpAuthConnectionContext extends LineTcpConnectionContext {
             while (n < CHALLENGE_LEN) {
                 assert recvBufStart + n < recvBufEnd;
                 int r = (int) (srand.nextDouble() * 0x5f) + 0x20;
-                Unsafe.getUnsafe().putByte(recvBufStart + n, (byte) r);
+                Unsafe.UNSAFE.putByte(recvBufStart + n, (byte) r);
                 challengeBytes[n] = (byte) r;
                 n++;
             }
-            Unsafe.getUnsafe().putByte(recvBufStart + n, (byte) '\n');
+            Unsafe.UNSAFE.putByte(recvBufStart + n, (byte) '\n');
             authState = AuthState.SENDING_CHALLENGE;
         }
     }
@@ -166,7 +166,7 @@ class LineTcpAuthConnectionContext extends LineTcpConnectionContext {
 
             byte[] signature = new byte[lineEnd];
             for (int n = 0; n < lineEnd; n++) {
-                signature[n] = Unsafe.getUnsafe().getByte(recvBufStart + n);
+                signature[n] = Unsafe.UNSAFE.getByte(recvBufStart + n);
             }
             authState = AuthState.FAILED;
 
@@ -201,7 +201,7 @@ class LineTcpAuthConnectionContext extends LineTcpConnectionContext {
         int n = 0;
         int lineEnd = -1;
         while (n < len) {
-            byte b = Unsafe.getUnsafe().getByte(recvBufStart + n);
+            byte b = Unsafe.UNSAFE.getByte(recvBufStart + n);
             if (b == (byte) '\n') {
                 lineEnd = n;
                 break;

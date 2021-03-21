@@ -54,9 +54,9 @@ public class NewLineProtocolParserLexerTest extends LineProtoLexerTest {
             if (len < 10) {
                 for (int i = 1; i < len; i++) {
                     for (int j = 0; j < len; j++) {
-                        Unsafe.getUnsafe().putByte(mem + j, line[j]);
+                        Unsafe.UNSAFE.putByte(mem + j, line[j]);
                     }
-                    Unsafe.getUnsafe().putByte(mem + len, (byte) '\n');
+                    Unsafe.UNSAFE.putByte(mem + len, (byte) '\n');
                     sink.clear();
                     resetParser(mem);
                     boolean complete = parseMeasurement(mem + i);
@@ -68,9 +68,9 @@ public class NewLineProtocolParserLexerTest extends LineProtoLexerTest {
             } else {
                 for (int i = 1; i < len - 10; i++) {
                     for (int j = 0; j < len; j++) {
-                        Unsafe.getUnsafe().putByte(mem + j, line[j]);
+                        Unsafe.UNSAFE.putByte(mem + j, line[j]);
                     }
-                    Unsafe.getUnsafe().putByte(mem + len, (byte) '\n');
+                    Unsafe.UNSAFE.putByte(mem + len, (byte) '\n');
                     sink.clear();
                     resetParser(mem);
                     parseMeasurement(mem + i);
@@ -88,9 +88,9 @@ public class NewLineProtocolParserLexerTest extends LineProtoLexerTest {
 
             // assert small buffer
             for (int j = 0; j < len; j++) {
-                Unsafe.getUnsafe().putByte(mem + j, line[j]);
+                Unsafe.UNSAFE.putByte(mem + j, line[j]);
             }
-            Unsafe.getUnsafe().putByte(mem + len, (byte) '\n');
+            Unsafe.UNSAFE.putByte(mem + len, (byte) '\n');
             sink.clear();
             resetParser(mem);
             Assert.assertEquals(endWithEOL, parseMeasurement(mem + len));
@@ -115,10 +115,10 @@ public class NewLineProtocolParserLexerTest extends LineProtoLexerTest {
         try {
             for (int i = 1; i < len; i++) {
                 for (int j = 0; j < bytes.length; j++) {
-                    Unsafe.getUnsafe().putByte(mem + j, bytes[j]);
+                    Unsafe.UNSAFE.putByte(mem + j, bytes[j]);
                 }
                 if (!endWithEOL) {
-                    Unsafe.getUnsafe().putByte(mem + bytes.length, (byte) '\n');
+                    Unsafe.UNSAFE.putByte(mem + bytes.length, (byte) '\n');
                 }
                 sink.clear();
                 resetParser(mem);

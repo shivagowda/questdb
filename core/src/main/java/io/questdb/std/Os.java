@@ -60,10 +60,10 @@ public final class Os {
             try {
                 long p = argv;
                 for (int i = 0; i < n; i++) {
-                    Unsafe.getUnsafe().putLong(p, paths.getQuick(i).address());
+                    Unsafe.UNSAFE.putLong(p, paths.getQuick(i).address());
                     p += 8;
                 }
-                Unsafe.getUnsafe().putLong(p, 0);
+                Unsafe.UNSAFE.putLong(p, 0);
                 return forkExec(argv);
             } finally {
                 Unsafe.free(argv, n + 1);
@@ -78,23 +78,23 @@ public final class Os {
     public static native long compareAndSwap(long mem, long oldValue, long newValue);
 
     public static int forkExecPid(long forkExecT) {
-        return Unsafe.getUnsafe().getInt(forkExecT + 8);
+        return Unsafe.UNSAFE.getInt(forkExecT + 8);
     }
 
     public static int forkExecReadFd(long forkExecT) {
-        return Unsafe.getUnsafe().getInt(forkExecT);
+        return Unsafe.UNSAFE.getInt(forkExecT);
     }
 
     public static int forkExecWriteFd(long forkExecT) {
-        return Unsafe.getUnsafe().getInt(forkExecT + 4);
+        return Unsafe.UNSAFE.getInt(forkExecT + 4);
     }
 
     public static byte[] generateKerberosToken(CharSequence spn) throws KerberosException {
         try (CharSequenceZ cs = new CharSequenceZ(spn)) {
             final long struct = generateKrbToken(cs.address());
-            int status = Unsafe.getUnsafe().getInt(struct);
-            int bufLen = Unsafe.getUnsafe().getInt(struct + 4);
-            long ptoken = Unsafe.getUnsafe().getLong(struct + 8);
+            int status = Unsafe.UNSAFE.getInt(struct);
+            int bufLen = Unsafe.UNSAFE.getInt(struct + 4);
+            long ptoken = Unsafe.UNSAFE.getLong(struct + 8);
 
 
             if (status != 0) {
@@ -104,7 +104,7 @@ public final class Os {
 
             byte[] token = new byte[bufLen];
             for (int i = 0; i < bufLen; i++) {
-                token[i] = Unsafe.getUnsafe().getByte(ptoken + i);
+                token[i] = Unsafe.UNSAFE.getByte(ptoken + i);
             }
             freeKrbToken(struct);
 

@@ -114,7 +114,7 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
             return offset;
         }
 
-        Unsafe.getUnsafe().copyMemory(from, appendAddress, len);
+        Unsafe.UNSAFE.copyMemory(from, appendAddress, len);
         appendAddress += len;
         return offset;
     }
@@ -129,67 +129,67 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
 
     public final void putByte(long offset, byte value) {
         checkLimits(offset, Byte.BYTES);
-        Unsafe.getUnsafe().putByte(baseAddress + offset, value);
+        Unsafe.UNSAFE.putByte(baseAddress + offset, value);
     }
 
     public void putByte(byte b) {
         checkLimits(Byte.BYTES);
-        Unsafe.getUnsafe().putByte(appendAddress, b);
+        Unsafe.UNSAFE.putByte(appendAddress, b);
         appendAddress++;
     }
 
     public void putChar(long offset, char value) {
         checkLimits(offset, Character.BYTES);
-        Unsafe.getUnsafe().putChar(baseAddress + offset, value);
+        Unsafe.UNSAFE.putChar(baseAddress + offset, value);
     }
 
     public final void putChar(char value) {
         checkLimits(Character.BYTES);
-        Unsafe.getUnsafe().putChar(appendAddress, value);
+        Unsafe.UNSAFE.putChar(appendAddress, value);
         appendAddress += Character.BYTES;
     }
 
     public void putDouble(long offset, double value) {
         checkLimits(offset, Double.BYTES);
-        Unsafe.getUnsafe().putDouble(baseAddress + offset, value);
+        Unsafe.UNSAFE.putDouble(baseAddress + offset, value);
     }
 
     public final void putDouble(double value) {
         checkLimits(Double.BYTES);
-        Unsafe.getUnsafe().putDouble(appendAddress, value);
+        Unsafe.UNSAFE.putDouble(appendAddress, value);
         appendAddress += Double.BYTES;
     }
 
     public void putFloat(long offset, float value) {
         checkLimits(offset, Float.BYTES);
-        Unsafe.getUnsafe().putFloat(baseAddress + offset, value);
+        Unsafe.UNSAFE.putFloat(baseAddress + offset, value);
     }
 
     public final void putFloat(float value) {
         checkLimits(Float.BYTES);
-        Unsafe.getUnsafe().putFloat(appendAddress, value);
+        Unsafe.UNSAFE.putFloat(appendAddress, value);
         appendAddress += Float.BYTES;
     }
 
     public void putInt(long offset, int value) {
         checkLimits(offset, Integer.BYTES);
-        Unsafe.getUnsafe().putInt(baseAddress + offset, value);
+        Unsafe.UNSAFE.putInt(baseAddress + offset, value);
     }
 
     public final void putInt(int value) {
         checkLimits(Integer.BYTES);
-        Unsafe.getUnsafe().putInt(appendAddress, value);
+        Unsafe.UNSAFE.putInt(appendAddress, value);
         appendAddress += Integer.BYTES;
     }
 
     public void putLong(long offset, long value) {
         checkLimits(offset, Long.BYTES);
-        Unsafe.getUnsafe().putLong(baseAddress + offset, value);
+        Unsafe.UNSAFE.putLong(baseAddress + offset, value);
     }
 
     public final void putLong(long value) {
         checkLimits(8);
-        Unsafe.getUnsafe().putLong(appendAddress, value);
+        Unsafe.UNSAFE.putLong(appendAddress, value);
         appendAddress += Long.BYTES;
     }
 
@@ -255,12 +255,12 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
 
     public void putShort(long offset, short value) {
         checkLimits(offset, 2);
-        Unsafe.getUnsafe().putShort(baseAddress + offset, value);
+        Unsafe.UNSAFE.putShort(baseAddress + offset, value);
     }
 
     public final void putShort(short value) {
         checkLimits(2);
-        Unsafe.getUnsafe().putShort(appendAddress, value);
+        Unsafe.UNSAFE.putShort(appendAddress, value);
         appendAddress += 2;
     }
 
@@ -273,7 +273,7 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
             checkLimits(6);
             final long offset = getAppendOffset();
             putInt(1);
-            Unsafe.getUnsafe().putChar(appendAddress, value);
+            Unsafe.UNSAFE.putChar(appendAddress, value);
             appendAddress += Character.BYTES;
             return offset;
         }
@@ -322,27 +322,27 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
     }
 
     public final byte getByte(long offset) {
-        return Unsafe.getUnsafe().getByte(addressOf(offset));
+        return Unsafe.UNSAFE.getByte(addressOf(offset));
     }
 
     public final char getChar(long offset) {
-        return Unsafe.getUnsafe().getChar(addressOf(offset));
+        return Unsafe.UNSAFE.getChar(addressOf(offset));
     }
 
     public final double getDouble(long offset) {
-        return Unsafe.getUnsafe().getDouble(addressOf(offset));
+        return Unsafe.UNSAFE.getDouble(addressOf(offset));
     }
 
     public final float getFloat(long offset) {
-        return Unsafe.getUnsafe().getFloat(addressOf(offset));
+        return Unsafe.UNSAFE.getFloat(addressOf(offset));
     }
 
     public final int getInt(long offset) {
-        return Unsafe.getUnsafe().getInt(addressOf(offset));
+        return Unsafe.UNSAFE.getInt(addressOf(offset));
     }
 
     public long getLong(long offset) {
-        return Unsafe.getUnsafe().getLong(addressOf(offset));
+        return Unsafe.UNSAFE.getLong(addressOf(offset));
     }
 
     public void getLong256(long offset, CharSink sink) {
@@ -372,7 +372,7 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
     }
 
     public final short getShort(long offset) {
-        return Unsafe.getUnsafe().getShort(addressOf(offset));
+        return Unsafe.UNSAFE.getShort(addressOf(offset));
     }
 
     public final CharSequence getStr(long offset) {
@@ -434,13 +434,13 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
 
     public void zero() {
         long baseLength = baseAddressHi - baseAddress;
-        Unsafe.getUnsafe().setMemory(baseAddress, baseLength, (byte) 0);
+        Unsafe.UNSAFE.setMemory(baseAddress, baseLength, (byte) 0);
     }
 
     private static void copyStrChars(CharSequence value, int pos, int len, long address) {
         for (int i = 0; i < len; i++) {
             char c = value.charAt(i + pos);
-            Unsafe.getUnsafe().putChar(address + 2 * i, c);
+            Unsafe.UNSAFE.putChar(address + 2 * i, c);
         }
     }
 
@@ -507,7 +507,7 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
     private long putStr0(CharSequence value, int pos, int len) {
         checkLimits(len * 2 + STRING_LENGTH_BYTES);
         final long offset = getAppendOffset();
-        Unsafe.getUnsafe().putInt(appendAddress, len);
+        Unsafe.UNSAFE.putInt(appendAddress, len);
         copyStrChars(value, pos, len, appendAddress + Integer.BYTES);
         appendAddress += len * 2 + Integer.BYTES;
         return offset;
@@ -566,7 +566,7 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
         public void copyTo(long address, final long start, final long length) {
             long bytesRemaining = Math.min(length, this.len - start);
             long offset = this.offset + start;
-            Unsafe.getUnsafe().copyMemory(baseAddress + offset, address, bytesRemaining);
+            Unsafe.UNSAFE.copyMemory(baseAddress + offset, address, bytesRemaining);
         }
 
         @Override
@@ -585,10 +585,10 @@ public class ContiguousVirtualMemory implements BigMem, Mutable {
         @Override
         public void onDecoded(long l0, long l1, long l2, long l3) {
             checkLimits(Long256.BYTES);
-            Unsafe.getUnsafe().putLong(appendAddress, l0);
-            Unsafe.getUnsafe().putLong(appendAddress + 8, l1);
-            Unsafe.getUnsafe().putLong(appendAddress + 16, l2);
-            Unsafe.getUnsafe().putLong(appendAddress + 24, l3);
+            Unsafe.UNSAFE.putLong(appendAddress, l0);
+            Unsafe.UNSAFE.putLong(appendAddress + 8, l1);
+            Unsafe.UNSAFE.putLong(appendAddress + 16, l2);
+            Unsafe.UNSAFE.putLong(appendAddress + 24, l3);
         }
 
         private void putLong256(CharSequence hexString, int start, int end) {

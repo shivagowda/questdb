@@ -271,12 +271,12 @@ public final class Files {
     private static boolean strcmp(long lpsz, CharSequence s) {
         int len = s.length();
         for (int i = 0; i < len; i++) {
-            byte b = Unsafe.getUnsafe().getByte(lpsz + i);
+            byte b = Unsafe.UNSAFE.getByte(lpsz + i);
             if (b == 0 || b != (byte) s.charAt(i)) {
                 return false;
             }
         }
-        return Unsafe.getUnsafe().getByte(lpsz + len) == 0;
+        return Unsafe.UNSAFE.getByte(lpsz + len) == 0;
     }
 
     private static native int munmap0(long address, long len);

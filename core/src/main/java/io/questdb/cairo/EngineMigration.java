@@ -80,7 +80,7 @@ public class EngineMigration {
                     .$(']').$();
             if (existed) {
                 long readLen = ff.read(upgradeFd, mem, Integer.BYTES, 0);
-                if (readLen == Integer.BYTES && Unsafe.getUnsafe().getInt(mem) >= latestVersion) {
+                if (readLen == Integer.BYTES && Unsafe.UNSAFE.getInt(mem) >= latestVersion) {
                     LOG.info().$("table structures are up to date").$();
                     ff.close(upgradeFd);
                     upgradeFd = -1;
@@ -91,7 +91,7 @@ public class EngineMigration {
                 try {
                     LOG.info().$("upgrading database [version=").$(latestVersion).I$();
                     if (upgradeTables(context, latestVersion)) {
-                        Unsafe.getUnsafe().putInt(mem, latestVersion);
+                        Unsafe.UNSAFE.putInt(mem, latestVersion);
                         long writeLen = ff.write(upgradeFd, mem, Integer.BYTES, 0);
                         if (writeLen < Integer.BYTES) {
                             LOG.error().$("could not write to ").$(UPGRADE_FILE_NAME)
@@ -146,7 +146,7 @@ public class EngineMigration {
                             final long fd = openFileRWOrFail(ff, path);
                             try {
                                 if (ff.read(fd, mem, Integer.BYTES, META_OFFSET_VERSION) == Integer.BYTES) {
-                                    int currentTableVersion = Unsafe.getUnsafe().getInt(mem);
+                                    int currentTableVersion = Unsafe.UNSAFE.getInt(mem);
 
                                     if (currentTableVersion < latestVersion) {
                                         LOG.info().$("upgrading [path=").$(path).$(",fromVersion=").$(currentTableVersion)
@@ -176,7 +176,7 @@ public class EngineMigration {
                                                 return;
                                             }
 
-                                            Unsafe.getUnsafe().putInt(mem, i);
+                                            Unsafe.UNSAFE.putInt(mem, i);
                                             if (ff.write(fd, mem, Integer.BYTES, META_OFFSET_VERSION) != Integer.BYTES) {
                                                 // Table is migrated but we cannot write new version
                                                 // to meta file
@@ -220,7 +220,7 @@ public class EngineMigration {
             Path path = migrationContext.getTablePath();
 
             LOG.info().$("setting table id in [path=").$(path).I$();
-            Unsafe.getUnsafe().putInt(mem, migrationContext.getNextTableId());
+            Unsafe.UNSAFE.putInt(mem, migrationContext.getNextTableId());
             if (ff.write(migrationContext.getMetadataFd(), mem, Integer.BYTES, META_OFFSET_TABLE_ID) == Integer.BYTES) {
                 return;
             }
@@ -357,7 +357,7 @@ public class EngineMigration {
         if (ff.read(fd, tempMem4b, Integer.BYTES, offset) != Integer.BYTES) {
             throw CairoException.instance(ff.errno()).put("Cannot read: ").put(path);
         }
-        return Unsafe.getUnsafe().getInt(tempMem4b);
+        return Unsafe.UNSAFE.getInt(tempMem4b);
     }
 
     class MigrationContext {

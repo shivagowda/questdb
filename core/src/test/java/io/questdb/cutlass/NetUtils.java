@@ -105,7 +105,7 @@ public class NetUtils {
                         } else {
                             try {
                                 byte b = (byte) ((Numbers.hexToDecimal(c1) << 4) | Numbers.hexToDecimal(c2));
-                                Unsafe.getUnsafe().putByte(sendPtr++, b);
+                                Unsafe.UNSAFE.putByte(sendPtr++, b);
                             } catch (NumericException e) {
                                 e.printStackTrace();
                             }

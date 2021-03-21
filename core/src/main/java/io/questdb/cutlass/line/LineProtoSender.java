@@ -202,7 +202,7 @@ public class LineProtoSender extends AbstractCharSink implements Closeable {
         if (ptr >= hi) {
             send00();
         }
-        Unsafe.getUnsafe().putByte(ptr++, (byte) c);
+        Unsafe.UNSAFE.putByte(ptr++, (byte) c);
         return this;
     }
 
@@ -288,7 +288,7 @@ public class LineProtoSender extends AbstractCharSink implements Closeable {
             ptr = lineStart = lo;
         } else if (len < capacity) {
             long target = lo == bufA ? bufB : bufA;
-            Unsafe.getUnsafe().copyMemory(lineStart, target, len);
+            Unsafe.UNSAFE.copyMemory(lineStart, target, len);
             send();
             lineStart = lo = target;
             ptr = target + len;

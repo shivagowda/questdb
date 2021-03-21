@@ -52,12 +52,12 @@ public final class Hash {
         long hash = 0;
         final long hi = p + len;
         while (hi - p > 7) {
-            hash = (hash << 5) - hash + Unsafe.getUnsafe().getLong(p);
+            hash = (hash << 5) - hash + Unsafe.UNSAFE.getLong(p);
             p += Long.BYTES;
         }
 
         while (p < hi) {
-            hash = (hash << 5) - hash + Unsafe.getUnsafe().getByte(p++);
+            hash = (hash << 5) - hash + Unsafe.UNSAFE.getByte(p++);
         }
 
         return spread((int) hash);

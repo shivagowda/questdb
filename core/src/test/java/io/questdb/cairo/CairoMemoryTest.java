@@ -427,7 +427,7 @@ public class CairoMemoryTest {
                     long addr = FF.mmap(mem.getFd(), fileSize, 0, Files.MAP_RO);
                     try {
                         for (int i = 0; i < count; i++) {
-                            Assert.assertEquals(i, Unsafe.getUnsafe().getLong(addr + i * Long.BYTES));
+                            Assert.assertEquals(i, Unsafe.UNSAFE.getLong(addr + i * Long.BYTES));
                         }
                     } finally {
                         FF.munmap(addr, fileSize);
@@ -440,7 +440,7 @@ public class CairoMemoryTest {
                     addr = FF.mmap(mem.getFd(), fileSize, 0, Files.MAP_RO);
                     try {
                         for (int i = 0; i < fileSize / Long.BYTES; i++) {
-                            Assert.assertEquals(0, Unsafe.getUnsafe().getLong(addr + i * Long.BYTES));
+                            Assert.assertEquals(0, Unsafe.UNSAFE.getLong(addr + i * Long.BYTES));
                         }
                     } finally {
                         FF.munmap(addr, fileSize);

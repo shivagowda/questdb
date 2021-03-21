@@ -92,8 +92,8 @@ public class AvgIntVectorAggregateFunction extends DoubleFunction implements Vec
     public void initRosti(long pRosti) {
         // as for sums, except we space out values
         // we will have to replace them with doubles
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), 0);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset + 1), 0);
     }
 
     @Override

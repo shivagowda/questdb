@@ -193,7 +193,7 @@ public abstract class AbstractClassCatalogueFunctionFactory implements FunctionF
                         long fd = ff.openRO(path);
                         if (fd > -1) {
                             if (ff.read(fd, tempMem, Integer.BYTES, TableUtils.META_OFFSET_TABLE_ID) == Integer.BYTES) {
-                                intValues[4] = Unsafe.getUnsafe().getInt(tempMem);
+                                intValues[4] = Unsafe.UNSAFE.getInt(tempMem);
                                 ff.close(fd);
                                 return true;
                             }

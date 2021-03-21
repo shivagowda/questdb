@@ -299,7 +299,7 @@ public class HttpMultipartContentParserTest {
         public void onChunk(long lo, long hi) {
             onChunkCount++;
             for (long p = lo; p < hi; p++) {
-                sink.put((char) Unsafe.getUnsafe().getByte(p));
+                sink.put((char) Unsafe.UNSAFE.getByte(p));
             }
             if (firstChunkException != null && onChunkCount == 1) {
                 throw firstChunkException;

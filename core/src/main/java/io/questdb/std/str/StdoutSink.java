@@ -76,7 +76,7 @@ public final class StdoutSink extends AbstractCharSink implements Closeable {
         if (ptr == limit) {
             flush();
         }
-        Unsafe.getUnsafe().putByte(ptr++, (byte) c);
+        Unsafe.UNSAFE.putByte(ptr++, (byte) c);
         return this;
     }
 

@@ -60,7 +60,7 @@ public final class CharSequenceZ extends AbstractCharSequence implements Closeab
 
     @Override
     public char charAt(int index) {
-        return (char) Unsafe.getUnsafe().getByte(ptr + index);
+        return (char) Unsafe.UNSAFE.getByte(ptr + index);
     }
 
     private void alloc(int len) {
@@ -70,7 +70,7 @@ public final class CharSequenceZ extends AbstractCharSequence implements Closeab
 
     private void cpyz(CharSequence str, int len) {
         Chars.asciiStrCpy(str, len, ptr);
-        Unsafe.getUnsafe().putByte(ptr + len, (byte) 0);
+        Unsafe.UNSAFE.putByte(ptr + len, (byte) 0);
         this.len = len;
     }
 }

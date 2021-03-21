@@ -116,7 +116,7 @@ public class CharsTest {
         try {
             byte[] bytes = in.getBytes(StandardCharsets.UTF_8);
             for (int i = 0, n = bytes.length; i < n; i++) {
-                Unsafe.getUnsafe().putByte(p + i, bytes[i]);
+                Unsafe.UNSAFE.putByte(p + i, bytes[i]);
             }
             CharSink b = new StringSink();
             Chars.utf8Decode(p, p + bytes.length, b);
@@ -139,9 +139,9 @@ public class CharsTest {
         try {
             byte[] bytes = in.getBytes(StandardCharsets.UTF_8);
             for (int i = 0, n = bytes.length; i < n; i++) {
-                Unsafe.getUnsafe().putByte(p + i, bytes[i]);
+                Unsafe.UNSAFE.putByte(p + i, bytes[i]);
             }
-            Unsafe.getUnsafe().putByte(p + bytes.length, (byte) 0);
+            Unsafe.UNSAFE.putByte(p + bytes.length, (byte) 0);
             CharSink b = new StringSink();
             Chars.utf8DecodeZ(p, b);
             TestUtils.assertEquals(in, b.toString());

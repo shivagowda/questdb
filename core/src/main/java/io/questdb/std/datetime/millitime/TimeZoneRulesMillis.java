@@ -52,16 +52,16 @@ public class TimeZoneRulesMillis implements TimeZoneRules {
     private final long standardOffset;
 
     public TimeZoneRulesMillis(ZoneRules rules) {
-        final long[] savingsInstantTransition = (long[]) Unsafe.getUnsafe().getObject(rules, SAVING_INSTANT_TRANSITION);
+        final long[] savingsInstantTransition = (long[]) Unsafe.UNSAFE.getObject(rules, SAVING_INSTANT_TRANSITION);
 
         if (savingsInstantTransition.length == 0) {
-            ZoneOffset[] standardOffsets = (ZoneOffset[]) Unsafe.getUnsafe().getObject(rules, STANDARD_OFFSETS);
+            ZoneOffset[] standardOffsets = (ZoneOffset[]) Unsafe.UNSAFE.getObject(rules, STANDARD_OFFSETS);
             standardOffset = standardOffsets[0].getTotalSeconds() * 1000;
         } else {
             standardOffset = Long.MIN_VALUE;
         }
 
-        LocalDateTime[] savingsLocalTransitions = (LocalDateTime[]) Unsafe.getUnsafe().getObject(rules, SAVINGS_LOCAL_TRANSITION);
+        LocalDateTime[] savingsLocalTransitions = (LocalDateTime[]) Unsafe.UNSAFE.getObject(rules, SAVINGS_LOCAL_TRANSITION);
         for (int i = 0, n = savingsLocalTransitions.length; i < n; i++) {
             LocalDateTime dt = savingsLocalTransitions[i];
 
@@ -72,7 +72,7 @@ public class TimeZoneRulesMillis implements TimeZoneRules {
         historyOverlapCheckCutoff = historicTransitions.size() - 1;
 
 
-        ZoneOffsetTransitionRule[] lastRules = (ZoneOffsetTransitionRule[]) Unsafe.getUnsafe().getObject(rules, LAST_RULES);
+        ZoneOffsetTransitionRule[] lastRules = (ZoneOffsetTransitionRule[]) Unsafe.UNSAFE.getObject(rules, LAST_RULES);
         this.rules = new ObjList<>(lastRules.length);
         for (int i = 0, n = lastRules.length; i < n; i++) {
             ZoneOffsetTransitionRule zr = lastRules[i];
@@ -103,7 +103,7 @@ public class TimeZoneRulesMillis implements TimeZoneRules {
 
         this.ruleCount = lastRules.length;
 
-        ZoneOffset[] wallOffsets = (ZoneOffset[]) Unsafe.getUnsafe().getObject(rules, WALL_OFFSETS);
+        ZoneOffset[] wallOffsets = (ZoneOffset[]) Unsafe.UNSAFE.getObject(rules, WALL_OFFSETS);
         this.wallOffsets = new int[wallOffsets.length];
         for (int i = 0, n = wallOffsets.length; i < n; i++) {
             this.wallOffsets[i] = wallOffsets[i].getTotalSeconds();

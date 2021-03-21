@@ -75,29 +75,29 @@ public class VirtualMemoryTest {
             try {
                 // supply length of our buffer
                 // blob content would be shorter
-                Unsafe.getUnsafe().setMemory(buffer, 1024, (byte) 5);
+                Unsafe.UNSAFE.setMemory(buffer, 1024, (byte) 5);
                 actual.copyTo(buffer, 0, 1024);
 
                 for (int i = 0; i < N; i++) {
-                    assertEquals(seq.byteAt(i), Unsafe.getUnsafe().getByte(buffer + i));
+                    assertEquals(seq.byteAt(i), Unsafe.UNSAFE.getByte(buffer + i));
                 }
 
                 // rest of the buffer must not be overwritten
                 for (int i = N; i < 1024; i++) {
-                    assertEquals(5, Unsafe.getUnsafe().getByte(buffer + i));
+                    assertEquals(5, Unsafe.UNSAFE.getByte(buffer + i));
                 }
 
                 // copy from middle
-                Unsafe.getUnsafe().setMemory(buffer, 1024, (byte) 5);
+                Unsafe.UNSAFE.setMemory(buffer, 1024, (byte) 5);
                 actual.copyTo(buffer, O, 1024);
 
                 for (int i = 0; i < N - O; i++) {
-                    assertEquals(seq.byteAt(i + O), Unsafe.getUnsafe().getByte(buffer + i));
+                    assertEquals(seq.byteAt(i + O), Unsafe.UNSAFE.getByte(buffer + i));
                 }
 
                 // rest of the buffer must not be overwritten
                 for (int i = N - O; i < 1024; i++) {
-                    assertEquals(5, Unsafe.getUnsafe().getByte(buffer + i));
+                    assertEquals(5, Unsafe.UNSAFE.getByte(buffer + i));
                 }
             } finally {
                 Unsafe.free(buffer, 1024);
@@ -159,7 +159,7 @@ public class VirtualMemoryTest {
                 long address = mem.addressOf(offset);
                 offset += len;
                 while (len > 0 & i < N) {
-                    assertEquals(i++, Unsafe.getUnsafe().getShort(address));
+                    assertEquals(i++, Unsafe.UNSAFE.getShort(address));
                     address += 2;
                     len -= 2;
                 }
@@ -1102,7 +1102,7 @@ public class VirtualMemoryTest {
                 int sz = buffer.length;
                 for (int j = 0; j < sz; j++) {
                     buffer[j] = rnd.nextByte();
-                    Unsafe.getUnsafe().putByte(bufAddr + j, buffer[j]);
+                    Unsafe.UNSAFE.putByte(bufAddr + j, buffer[j]);
                 }
 
                 o = mem.putBin(binarySequence);

@@ -108,7 +108,7 @@ public class ReaderPool extends AbstractPool implements ResourcePool<TableReader
             LOG.debug().$("Thread ").$(thread).$(" is moving to entry ").$(e.index + 1).$();
 
             // all allocated, create next entry if possible
-            if (Unsafe.getUnsafe().compareAndSwapInt(e, NEXT_STATUS, NEXT_OPEN, NEXT_ALLOCATED)) {
+            if (Unsafe.UNSAFE.compareAndSwapInt(e, NEXT_STATUS, NEXT_OPEN, NEXT_ALLOCATED)) {
                 LOG.debug().$("Thread ").$(thread).$(" allocated entry ").$(e.index + 1).$();
                 e.next = new Entry(e.index + 1, clock.getTicks());
             }
@@ -167,7 +167,7 @@ public class ReaderPool extends AbstractPool implements ResourcePool<TableReader
                 }
 
                 // prevent new entries from being created
-                if (e.next == null && Unsafe.getUnsafe().compareAndSwapInt(e, NEXT_STATUS, NEXT_OPEN, NEXT_LOCKED)) {
+                if (e.next == null && Unsafe.UNSAFE.compareAndSwapInt(e, NEXT_STATUS, NEXT_OPEN, NEXT_LOCKED)) {
                     break;
                 }
 

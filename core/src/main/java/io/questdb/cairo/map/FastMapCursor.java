@@ -61,7 +61,7 @@ public final class FastMapCursor implements RecordCursor {
     public boolean hasNext() {
         if (remaining > 0) {
             long address = this.address;
-            this.address = address + Unsafe.getUnsafe().getInt(address);
+            this.address = address + Unsafe.UNSAFE.getInt(address);
             remaining--;
             recordA.of(address);
             return true;

@@ -85,7 +85,7 @@ public class Worker extends Thread {
     public void run() {
         Throwable ex = null;
         try {
-            if (Unsafe.getUnsafe().compareAndSwapInt(this, RUNNING_OFFSET, 0, 1)) {
+            if (Unsafe.UNSAFE.compareAndSwapInt(this, RUNNING_OFFSET, 0, 1)) {
                 if (affinity > -1) {
                     if (Os.setCurrentThreadAffinity(this.affinity) == 0) {
                         if (log != null) {

@@ -194,7 +194,7 @@ public class TablePageFrameCursor implements PageFrameCursor {
                     columnFrameLengths.setQuick(i, columnPageLength);
 
                     if (timestampColumnIndex == columnIndex) {
-                        firstTimestamp = Unsafe.getUnsafe().getLong(columnPageAddress);
+                        firstTimestamp = Unsafe.UNSAFE.getLong(columnPageAddress);
                     }
                 } else {
                     columnFrameAddresses.setQuick(i, 0);

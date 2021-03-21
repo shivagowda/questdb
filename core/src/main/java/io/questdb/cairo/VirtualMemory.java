@@ -75,7 +75,7 @@ public class VirtualMemory implements BigMem {
     private static void copyStrChars(CharSequence value, int pos, int len, long address) {
         for (int i = 0; i < len; i++) {
             char c = value.charAt(i + pos);
-            Unsafe.getUnsafe().putChar(address + 2 * i, c);
+            Unsafe.UNSAFE.putChar(address + 2 * i, c);
         }
     }
 
@@ -141,42 +141,42 @@ public class VirtualMemory implements BigMem {
 
     public final byte getByte(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - 1) {
-            return Unsafe.getUnsafe().getByte(absolutePointer + offset);
+            return Unsafe.UNSAFE.getByte(absolutePointer + offset);
         }
         return getByte0(offset);
     }
 
     public final char getChar(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Character.BYTES) {
-            return Unsafe.getUnsafe().getChar(absolutePointer + offset);
+            return Unsafe.UNSAFE.getChar(absolutePointer + offset);
         }
         return getChar0(offset);
     }
 
     public final double getDouble(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Double.BYTES) {
-            return Unsafe.getUnsafe().getDouble(absolutePointer + offset);
+            return Unsafe.UNSAFE.getDouble(absolutePointer + offset);
         }
         return getDouble0(offset);
     }
 
     public final float getFloat(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Float.BYTES) {
-            return Unsafe.getUnsafe().getFloat(absolutePointer + offset);
+            return Unsafe.UNSAFE.getFloat(absolutePointer + offset);
         }
         return getFloat0(offset);
     }
 
     public final int getInt(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Integer.BYTES) {
-            return Unsafe.getUnsafe().getInt(absolutePointer + offset);
+            return Unsafe.UNSAFE.getInt(absolutePointer + offset);
         }
         return getInt0(offset);
     }
 
     public long getLong(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Long.BYTES) {
-            return Unsafe.getUnsafe().getLong(absolutePointer + offset);
+            return Unsafe.UNSAFE.getLong(absolutePointer + offset);
         }
         return getLong0(offset);
     }
@@ -184,10 +184,10 @@ public class VirtualMemory implements BigMem {
     public void getLong256(long offset, CharSink sink) {
         final long a, b, c, d;
         if (roOffsetLo < offset && offset < roOffsetHi - Long256.BYTES) {
-            a = Unsafe.getUnsafe().getLong(absolutePointer + offset);
-            b = Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES);
-            c = Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES * 2);
-            d = Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES * 3);
+            a = Unsafe.UNSAFE.getLong(absolutePointer + offset);
+            b = Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES);
+            c = Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES * 2);
+            d = Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES * 3);
         } else {
             a = getLong(offset);
             b = getLong(offset + Long.BYTES);
@@ -199,10 +199,10 @@ public class VirtualMemory implements BigMem {
 
     public void getLong256(long offset, Long256Sink sink) {
         if (roOffsetLo < offset && offset < roOffsetHi - Long256.BYTES) {
-            sink.setLong0(Unsafe.getUnsafe().getLong(absolutePointer + offset));
-            sink.setLong1(Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES));
-            sink.setLong2(Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES * 2));
-            sink.setLong3(Unsafe.getUnsafe().getLong(absolutePointer + offset + Long.BYTES * 3));
+            sink.setLong0(Unsafe.UNSAFE.getLong(absolutePointer + offset));
+            sink.setLong1(Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES));
+            sink.setLong2(Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES * 2));
+            sink.setLong3(Unsafe.UNSAFE.getLong(absolutePointer + offset + Long.BYTES * 3));
         } else {
             sink.setLong0(getLong(offset));
             sink.setLong1(getLong(offset + Long.BYTES));
@@ -223,7 +223,7 @@ public class VirtualMemory implements BigMem {
 
     public final short getShort(long offset) {
         if (roOffsetLo < offset && offset < roOffsetHi - Short.BYTES) {
-            return Unsafe.getUnsafe().getShort(absolutePointer + offset);
+            return Unsafe.UNSAFE.getShort(absolutePointer + offset);
         }
         return getShort0(offset);
     }
@@ -260,11 +260,11 @@ public class VirtualMemory implements BigMem {
 
             long h = 179426491L;
             for (long i = 0; i < n; i += 8) {
-                h = (h << 5) - h + Unsafe.getUnsafe().getLong(address + i);
+                h = (h << 5) - h + Unsafe.UNSAFE.getLong(address + i);
             }
 
             for (; n < size; n++) {
-                h = (h << 5) - h + Unsafe.getUnsafe().getByte(address + n);
+                h = (h << 5) - h + Unsafe.UNSAFE.getByte(address + n);
             }
             return h;
         }
@@ -321,7 +321,7 @@ public class VirtualMemory implements BigMem {
         }
 
         if (len < pageHi - appendPointer) {
-            Unsafe.getUnsafe().copyMemory(from, appendPointer, len);
+            Unsafe.UNSAFE.copyMemory(from, appendPointer, len);
             appendPointer += len;
         } else {
             putBinSlit(from, len);
@@ -343,7 +343,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putByte(long offset, byte value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 1) {
-            Unsafe.getUnsafe().putByte(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putByte(absolutePointer + offset, value);
         } else {
             putByteRnd(offset, value);
         }
@@ -354,13 +354,13 @@ public class VirtualMemory implements BigMem {
         if (pageHi == appendPointer) {
             pageAt(getAppendOffset() + 1);
         }
-        Unsafe.getUnsafe().putByte(appendPointer++, b);
+        Unsafe.UNSAFE.putByte(appendPointer++, b);
     }
 
     @Override
     public void putChar(long offset, char value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 2) {
-            Unsafe.getUnsafe().putChar(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putChar(absolutePointer + offset, value);
         } else {
             putCharBytes(offset, value);
         }
@@ -369,7 +369,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putChar(char value) {
         if (pageHi - appendPointer > 1) {
-            Unsafe.getUnsafe().putChar(appendPointer, value);
+            Unsafe.UNSAFE.putChar(appendPointer, value);
             appendPointer += 2;
         } else {
             putCharBytes(value);
@@ -379,7 +379,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putDouble(long offset, double value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 8) {
-            Unsafe.getUnsafe().putDouble(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putDouble(absolutePointer + offset, value);
         } else {
             putDoubleBytes(offset, value);
         }
@@ -388,7 +388,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putDouble(double value) {
         if (pageHi - appendPointer > 7) {
-            Unsafe.getUnsafe().putDouble(appendPointer, value);
+            Unsafe.UNSAFE.putDouble(appendPointer, value);
             appendPointer += 8;
         } else {
             putDoubleBytes(value);
@@ -398,7 +398,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putFloat(long offset, float value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 4) {
-            Unsafe.getUnsafe().putFloat(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putFloat(absolutePointer + offset, value);
         } else {
             putFloatBytes(offset, value);
         }
@@ -407,7 +407,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putFloat(float value) {
         if (pageHi - appendPointer > 3) {
-            Unsafe.getUnsafe().putFloat(appendPointer, value);
+            Unsafe.UNSAFE.putFloat(appendPointer, value);
             appendPointer += 4;
         } else {
             putFloatBytes(value);
@@ -417,7 +417,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putInt(long offset, int value) {
         if (roOffsetLo < offset && offset < roOffsetHi - Integer.BYTES) {
-            Unsafe.getUnsafe().putInt(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putInt(absolutePointer + offset, value);
         } else {
             putIntBytes(offset, value);
         }
@@ -426,7 +426,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putInt(int value) {
         if (pageHi - appendPointer > 3) {
-            Unsafe.getUnsafe().putInt(appendPointer, value);
+            Unsafe.UNSAFE.putInt(appendPointer, value);
             appendPointer += 4;
         } else {
             putIntBytes(value);
@@ -436,7 +436,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putLong(long offset, long value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 8) {
-            Unsafe.getUnsafe().putLong(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putLong(absolutePointer + offset, value);
         } else {
             putLongBytes(offset, value);
         }
@@ -445,7 +445,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putLong(long value) {
         if (pageHi - appendPointer > 7) {
-            Unsafe.getUnsafe().putLong(appendPointer, value);
+            Unsafe.UNSAFE.putLong(appendPointer, value);
             appendPointer += 8;
         } else {
             putLongBytes(value);
@@ -455,8 +455,8 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putLong128(long l1, long l2) {
         if (pageHi - appendPointer > 15) {
-            Unsafe.getUnsafe().putLong(appendPointer, l1);
-            Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES, l2);
+            Unsafe.UNSAFE.putLong(appendPointer, l1);
+            Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES, l2);
             appendPointer += 16;
         } else {
             putLong(l1);
@@ -478,10 +478,10 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putLong256(long offset, long l0, long l1, long l2, long l3) {
         if (roOffsetLo < offset && offset < roOffsetHi - Long256.BYTES) {
-            Unsafe.getUnsafe().putLong(absolutePointer + offset, l0);
-            Unsafe.getUnsafe().putLong(absolutePointer + offset + Long.BYTES, l1);
-            Unsafe.getUnsafe().putLong(absolutePointer + offset + Long.BYTES * 2, l2);
-            Unsafe.getUnsafe().putLong(absolutePointer + offset + Long.BYTES * 3, l3);
+            Unsafe.UNSAFE.putLong(absolutePointer + offset, l0);
+            Unsafe.UNSAFE.putLong(absolutePointer + offset + Long.BYTES, l1);
+            Unsafe.UNSAFE.putLong(absolutePointer + offset + Long.BYTES * 2, l2);
+            Unsafe.UNSAFE.putLong(absolutePointer + offset + Long.BYTES * 3, l3);
         } else {
             putLong(offset, l0);
             putLong(offset + Long.BYTES, l1);
@@ -493,10 +493,10 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putLong256(long l0, long l1, long l2, long l3) {
         if (pageHi - appendPointer > Long256.BYTES - 1) {
-            Unsafe.getUnsafe().putLong(appendPointer, l0);
-            Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES, l1);
-            Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES * 2, l2);
-            Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES * 3, l3);
+            Unsafe.UNSAFE.putLong(appendPointer, l0);
+            Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES, l1);
+            Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES * 2, l2);
+            Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES * 3, l3);
             appendPointer += Long256.BYTES;
         } else {
             putLong(l0);
@@ -555,7 +555,7 @@ public class VirtualMemory implements BigMem {
 
     public final void putBlockOfBytes(long from, long len) {
         if (len < pageHi - appendPointer) {
-            Unsafe.getUnsafe().copyMemory(from, appendPointer, len);
+            Unsafe.UNSAFE.copyMemory(from, appendPointer, len);
             appendPointer += len;
         } else {
             putBinSlit(from, len);
@@ -565,7 +565,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public void putShort(long offset, short value) {
         if (roOffsetLo < offset && offset < roOffsetHi - 2) {
-            Unsafe.getUnsafe().putShort(absolutePointer + offset, value);
+            Unsafe.UNSAFE.putShort(absolutePointer + offset, value);
         } else {
             putShortBytes(offset, value);
         }
@@ -574,7 +574,7 @@ public class VirtualMemory implements BigMem {
     @Override
     public final void putShort(short value) {
         if (pageHi - appendPointer > 1) {
-            Unsafe.getUnsafe().putShort(appendPointer, value);
+            Unsafe.UNSAFE.putShort(appendPointer, value);
             appendPointer += 2;
         } else {
             putShortBytes(value);
@@ -595,7 +595,7 @@ public class VirtualMemory implements BigMem {
             if (pageHi - appendPointer < Character.BYTES) {
                 putSplitChar(value);
             } else {
-                Unsafe.getUnsafe().putChar(appendPointer, value);
+                Unsafe.UNSAFE.putChar(appendPointer, value);
                 appendPointer += Character.BYTES;
             }
             return offset;
@@ -651,7 +651,7 @@ public class VirtualMemory implements BigMem {
                 address = allocateNextPage(i);
                 pages.setQuick(i, address);
             }
-            Unsafe.getUnsafe().setMemory(address, pageSize, (byte) 0);
+            Unsafe.UNSAFE.setMemory(address, pageSize, (byte) 0);
         }
     }
 
@@ -700,7 +700,7 @@ public class VirtualMemory implements BigMem {
     }
 
     private byte getByte0(long offset) {
-        return Unsafe.getUnsafe().getByte(computeHotPage(pageIndex(offset)) + offsetInPage(offset));
+        return Unsafe.UNSAFE.getByte(computeHotPage(pageIndex(offset)) + offsetInPage(offset));
     }
 
     private char getChar0(long offset) {
@@ -709,7 +709,7 @@ public class VirtualMemory implements BigMem {
         final long pageSize = getPageSize(page);
 
         if (pageSize - pageOffset > 1) {
-            return Unsafe.getUnsafe().getChar(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getChar(computeHotPage(page) + pageOffset);
         }
 
         return getCharBytes(page, pageOffset, pageSize);
@@ -724,7 +724,7 @@ public class VirtualMemory implements BigMem {
                 pageAddress = getPageAddress(++page);
                 pageOffset = 0;
             }
-            char b = (char) (Unsafe.getUnsafe().getByte(pageAddress + pageOffset++));
+            char b = (char) (Unsafe.UNSAFE.getByte(pageAddress + pageOffset++));
             value = (char) ((b << (8 * i)) | value);
         }
 
@@ -737,7 +737,7 @@ public class VirtualMemory implements BigMem {
         final long pageSize = getPageSize(page);
 
         if (pageSize - pageOffset > 7) {
-            return Unsafe.getUnsafe().getDouble(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getDouble(computeHotPage(page) + pageOffset);
         }
         return getDoubleBytes(page, pageOffset, pageSize);
     }
@@ -751,7 +751,7 @@ public class VirtualMemory implements BigMem {
         long pageOffset = offsetInPage(offset);
 
         if (getPageSize(page) - pageOffset > 3) {
-            return Unsafe.getUnsafe().getFloat(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getFloat(computeHotPage(page) + pageOffset);
         }
         return getFloatBytes(page, pageOffset);
     }
@@ -765,7 +765,7 @@ public class VirtualMemory implements BigMem {
         long pageOffset = offsetInPage(offset);
 
         if (getPageSize(page) - pageOffset > 3) {
-            return Unsafe.getUnsafe().getInt(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getInt(computeHotPage(page) + pageOffset);
         }
         return getIntBytes(page, pageOffset);
     }
@@ -780,7 +780,7 @@ public class VirtualMemory implements BigMem {
                 pageAddress = getPageAddress(++page);
                 pageOffset = 0;
             }
-            int b = Unsafe.getUnsafe().getByte(pageAddress + pageOffset++) & 0xff;
+            int b = Unsafe.UNSAFE.getByte(pageAddress + pageOffset++) & 0xff;
             value = (b << (8 * i)) | value;
         }
         return value;
@@ -792,7 +792,7 @@ public class VirtualMemory implements BigMem {
         final long pageSize = getPageSize(page);
 
         if (pageSize - pageOffset > 7) {
-            return Unsafe.getUnsafe().getLong(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getLong(computeHotPage(page) + pageOffset);
         }
         return getLongBytes(page, pageOffset, pageSize);
     }
@@ -806,7 +806,7 @@ public class VirtualMemory implements BigMem {
                 pageAddress = getPageAddress(++page);
                 pageOffset = 0;
             }
-            long b = Unsafe.getUnsafe().getByte(pageAddress + pageOffset++) & 0xff;
+            long b = Unsafe.UNSAFE.getByte(pageAddress + pageOffset++) & 0xff;
             value = (b << (8 * i)) | value;
         }
         return value;
@@ -846,7 +846,7 @@ public class VirtualMemory implements BigMem {
         final long pageSize = getPageSize(page);
 
         if (pageSize - pageOffset > 1) {
-            return Unsafe.getUnsafe().getShort(computeHotPage(page) + pageOffset);
+            return Unsafe.UNSAFE.getShort(computeHotPage(page) + pageOffset);
         }
 
         return getShortBytes(page, pageOffset, pageSize);
@@ -862,7 +862,7 @@ public class VirtualMemory implements BigMem {
                 assert pageAddress != 0;
                 pageOffset = 0;
             }
-            short b = (short) (Unsafe.getUnsafe().getByte(pageAddress + pageOffset++) & 0xff);
+            short b = (short) (Unsafe.UNSAFE.getByte(pageAddress + pageOffset++) & 0xff);
             value = (short) ((b << (8 * i)) | value);
         }
 
@@ -954,12 +954,12 @@ public class VirtualMemory implements BigMem {
         do {
             int half = (int) (pageHi - appendPointer);
             if (len <= half) {
-                Unsafe.getUnsafe().copyMemory(start, appendPointer, len);
+                Unsafe.UNSAFE.copyMemory(start, appendPointer, len);
                 appendPointer += len;
                 break;
             }
 
-            Unsafe.getUnsafe().copyMemory(start, appendPointer, half);
+            Unsafe.UNSAFE.copyMemory(start, appendPointer, half);
             pageAt(getAppendOffset() + half);  // +1?
             len -= half;
             start += half;
@@ -967,7 +967,7 @@ public class VirtualMemory implements BigMem {
     }
 
     private void putByteRnd(long offset, byte value) {
-        Unsafe.getUnsafe().putByte(mapRandomWritePage(offset) + offsetInPage(offset), value);
+        Unsafe.UNSAFE.putByte(mapRandomWritePage(offset) + offsetInPage(offset), value);
     }
 
     void putCharBytes(char value) {
@@ -1155,7 +1155,7 @@ public class VirtualMemory implements BigMem {
         public byte byteAt(long index) {
             try {
                 if (index == lastIndex + 1 && readAddress < readLimit) {
-                    return Unsafe.getUnsafe().getByte(readAddress++);
+                    return Unsafe.UNSAFE.getByte(readAddress++);
                 }
                 return updatePosAndGet(index);
             } finally {
@@ -1190,7 +1190,7 @@ public class VirtualMemory implements BigMem {
 
         private byte updatePosAndGet(long index) {
             calculateBlobAddress(this.offset + index);
-            return Unsafe.getUnsafe().getByte(readAddress++);
+            return Unsafe.UNSAFE.getByte(readAddress++);
         }
     }
 
@@ -1201,7 +1201,7 @@ public class VirtualMemory implements BigMem {
             final long pageAddress = getPageAddress(page);
             final long offsetInPage = offsetInPage(offset);
             final long bytesToCopy = Math.min(len, pageSize - offsetInPage);
-            Unsafe.getUnsafe().copyMemory(pageAddress + offsetInPage, address, bytesToCopy);
+            Unsafe.UNSAFE.copyMemory(pageAddress + offsetInPage, address, bytesToCopy);
             len -= bytesToCopy;
             offset += bytesToCopy;
             address += bytesToCopy;
@@ -1221,10 +1221,10 @@ public class VirtualMemory implements BigMem {
 
         @Override
         public void onDecoded(long l0, long l1, long l2, long l3) {
-            Unsafe.getUnsafe().putLong(appendPointer, l0);
-            Unsafe.getUnsafe().putLong(appendPointer + 8, l1);
-            Unsafe.getUnsafe().putLong(appendPointer + 16, l2);
-            Unsafe.getUnsafe().putLong(appendPointer + 24, l3);
+            Unsafe.UNSAFE.putLong(appendPointer, l0);
+            Unsafe.UNSAFE.putLong(appendPointer + 8, l1);
+            Unsafe.UNSAFE.putLong(appendPointer + 16, l2);
+            Unsafe.UNSAFE.putLong(appendPointer + 24, l3);
         }
 
         private void putLong256(CharSequence hexString, int start, int end) {

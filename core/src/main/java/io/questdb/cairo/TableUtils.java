@@ -353,7 +353,7 @@ public final class TableUtils {
     public static void resetTxn(VirtualMemory txMem, int symbolMapCount, long txn, long dataVersion, long partitionTableVersion) {
         // txn to let readers know table is being reset
         txMem.putLong(TX_OFFSET_TXN, txn);
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
 
         // transient row count
         txMem.putLong(TX_OFFSET_TRANSIENT_ROW_COUNT, 0);
@@ -378,7 +378,7 @@ public final class TableUtils {
             txMem.putInt(offset, 0);
         }
 
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
         // txn check
         txMem.putLong(TX_OFFSET_TXN_CHECK, txn);
 
@@ -548,7 +548,7 @@ public final class TableUtils {
             if (ff.read(fd, tempMem8b, Long.BYTES, offset) != Long.BYTES) {
                 throw CairoException.instance(ff.errno()).put("Cannot read: ").put(path);
             }
-            return Unsafe.getUnsafe().getLong(tempMem8b);
+            return Unsafe.UNSAFE.getLong(tempMem8b);
         } finally {
             ff.close(fd);
         }
@@ -567,7 +567,7 @@ public final class TableUtils {
                     if (ff.read(fd, buf, 8, 0) != 8) {
                         throw CairoException.instance(Os.errno()).put("Cannot read top of column ").put(path);
                     }
-                    return Unsafe.getUnsafe().getLong(buf);
+                    return Unsafe.UNSAFE.getLong(buf);
                 } finally {
                     ff.close(fd);
                 }
@@ -737,7 +737,7 @@ public final class TableUtils {
                         long size = 0L;
 
                         for (long ptr = mappedMem, hi = mappedMem + fileSize; ptr < hi; ptr += Long.BYTES) {
-                            long ts = Unsafe.getUnsafe().getLong(ptr);
+                            long ts = Unsafe.UNSAFE.getLong(ptr);
                             if (ts >= maxTimestamp) {
                                 maxTimestamp = ts;
                                 size++;
@@ -746,9 +746,9 @@ public final class TableUtils {
                             }
                         }
                         if (size > 0) {
-                            minTimestamp = Unsafe.getUnsafe().getLong(mappedMem);
-                            Unsafe.getUnsafe().putLong(tempMem16b, minTimestamp);
-                            Unsafe.getUnsafe().putLong(tempMem16b + Long.BYTES, maxTimestamp);
+                            minTimestamp = Unsafe.UNSAFE.getLong(mappedMem);
+                            Unsafe.UNSAFE.putLong(tempMem16b, minTimestamp);
+                            Unsafe.UNSAFE.putLong(tempMem16b + Long.BYTES, maxTimestamp);
                         }
                         return size;
                     } finally {

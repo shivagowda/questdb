@@ -24,10 +24,6 @@
 
 package io.questdb.cutlass.http;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BrokenBarrierException;
 
@@ -164,7 +160,7 @@ public class SendAndReceiveRequestBuilder {
             int n = nf.recv(fd, ptr + received, len - received);
             if (n > 0) {
                 for (int i = 0; i < n; i++) {
-                    receivedByteList.add(Unsafe.getUnsafe().getByte(ptr + received + i) & 0xff);
+                    receivedByteList.add(Unsafe.UNSAFE.getByte(ptr + received + i) & 0xff);
                 }
                 received += n;
                 if (null != listener) {
@@ -250,7 +246,7 @@ public class SendAndReceiveRequestBuilder {
             int n = nf.recv(fd, ptr + received, len - received);
             if (n > 0) {
                 for (int i = 0; i < n; i++) {
-                    receivedByteList.add(Unsafe.getUnsafe().getByte(ptr + received + i));
+                    receivedByteList.add(Unsafe.UNSAFE.getByte(ptr + received + i));
                 }
                 received += n;
                 if (null != listener) {

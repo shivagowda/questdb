@@ -77,7 +77,7 @@ public final class TestUtils {
                             offset += reada;
 
                             for (int i = 0; i < reada; i++) {
-                                Assert.assertEquals(Unsafe.getUnsafe().getByte(bufa + i), Unsafe.getUnsafe().getByte(bufb + i));
+                                Assert.assertEquals(Unsafe.UNSAFE.getByte(bufa + i), Unsafe.UNSAFE.getByte(bufb + i));
                             }
                         }
                     } finally {
@@ -114,11 +114,11 @@ public final class TestUtils {
                         }
 
                         for (int i = 0; i < reada; i++) {
-                            byte b = Unsafe.getUnsafe().getByte(bufa + i);
+                            byte b = Unsafe.UNSAFE.getByte(bufa + i);
                             if (b == 13) {
                                 continue;
                             }
-                            Assert.assertEquals(b, Unsafe.getUnsafe().getByte(strp++));
+                            Assert.assertEquals(b, Unsafe.UNSAFE.getByte(strp++));
                         }
 
                         offset += reada;

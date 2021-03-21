@@ -76,7 +76,7 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
         if (address == 0) {
             return;
         }
-        Unsafe.free(address, Unsafe.getUnsafe().getInt(address));
+        Unsafe.free(address, Unsafe.UNSAFE.getInt(address));
     }
 
     public void applyTransitionIndex(long pTransitionIndex) {
@@ -85,7 +85,7 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
 
         this.columnNameIndexMap.clear();
 
-        final int columnCount = Unsafe.getUnsafe().getInt(pTransitionIndex + 4);
+        final int columnCount = Unsafe.UNSAFE.getInt(pTransitionIndex + 4);
         final long index = pTransitionIndex + 8;
         final long stateAddress = index + columnCount * 8;
 
@@ -95,19 +95,19 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
             this.columnCount = columnCount;
         }
 
-        Unsafe.getUnsafe().setMemory(stateAddress, columnCount, (byte) 0);
+        Unsafe.UNSAFE.setMemory(stateAddress, columnCount, (byte) 0);
 
         // this is a silly exercise in walking the index
         for (int i = 0; i < columnCount; i++) {
 
             // prevent writing same entry once
-            if (Unsafe.getUnsafe().getByte(stateAddress + i) == -1) {
+            if (Unsafe.UNSAFE.getByte(stateAddress + i) == -1) {
                 continue;
             }
 
-            Unsafe.getUnsafe().putByte(stateAddress + i, (byte) -1);
+            Unsafe.UNSAFE.putByte(stateAddress + i, (byte) -1);
 
-            int copyFrom = Unsafe.getUnsafe().getInt(index + i * 8);
+            int copyFrom = Unsafe.UNSAFE.getInt(index + i * 8);
 
             // don't copy entries to themselves
             if (copyFrom == i + 1) {
@@ -124,7 +124,7 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
                 columnNameIndexMap.put(tmp.getName(), i);
                 tmp = moveMetadata(i, tmp);
 
-                int copyTo = Unsafe.getUnsafe().getInt(index + i * 8 + 4);
+                int copyTo = Unsafe.UNSAFE.getInt(index + i * 8 + 4);
 
                 // now we copied entry, what do we do with value that was already there?
                 // do we copy it somewhere else?
@@ -133,14 +133,14 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
                     // Yeah, we do. This can get recursive!
 
                     // prevent writing same entry twice
-                    if (Unsafe.getUnsafe().getByte(stateAddress + copyTo - 1) == -1) {
+                    if (Unsafe.UNSAFE.getByte(stateAddress + copyTo - 1) == -1) {
                         break;
                     }
-                    Unsafe.getUnsafe().putByte(stateAddress + copyTo - 1, (byte) -1);
+                    Unsafe.UNSAFE.putByte(stateAddress + copyTo - 1, (byte) -1);
 
                     columnNameIndexMap.put(tmp.getName(), copyTo - 1);
                     tmp = moveMetadata(copyTo - 1, tmp);
-                    copyTo = Unsafe.getUnsafe().getInt(index + (copyTo - 1) * 8 + 4);
+                    copyTo = Unsafe.UNSAFE.getInt(index + (copyTo - 1) * 8 + 4);
                 }
             } else {
                 // new instance
@@ -196,8 +196,8 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
             final int size = n * 16;
 
             long index = pTransitionIndex = Unsafe.calloc(size);
-            Unsafe.getUnsafe().putInt(index, size);
-            Unsafe.getUnsafe().putInt(index + 4, columnCount);
+            Unsafe.UNSAFE.putInt(index, size);
+            Unsafe.UNSAFE.putInt(index + 4, columnCount);
             index += 8;
 
             // index structure is
@@ -220,10 +220,10 @@ public class TableReaderMetadata extends BaseRecordMetadata implements Closeable
                 if (oldPosition > -1
                         && TableUtils.getColumnType(metaMem, i) == TableUtils.getColumnType(this.metaMem, oldPosition)
                         && TableUtils.isColumnIndexed(metaMem, i) == TableUtils.isColumnIndexed(this.metaMem, oldPosition)) {
-                    Unsafe.getUnsafe().putInt(index + i * 8, oldPosition + 1);
-                    Unsafe.getUnsafe().putInt(index + oldPosition * 8 + 4, i + 1);
+                    Unsafe.UNSAFE.putInt(index + i * 8, oldPosition + 1);
+                    Unsafe.UNSAFE.putInt(index + oldPosition * 8 + 4, i + 1);
                 } else {
-                    Unsafe.getUnsafe().putLong(index + i * 8, 0);
+                    Unsafe.UNSAFE.putLong(index + i * 8, 0);
                 }
             }
             return pTransitionIndex;

@@ -116,7 +116,7 @@ class LineTcpConnectionContext implements IOContext, Mutable {
         if (recvBufNewStart > recvBufStart) {
             final int len = (int) (recvBufPos - recvBufNewStart);
             if (len > 0) {
-                Unsafe.getUnsafe().copyMemory(recvBufNewStart, recvBufStart, len);
+                Unsafe.UNSAFE.copyMemory(recvBufNewStart, recvBufStart, len);
             }
             recvBufPos = recvBufStart + len;
             return true;

@@ -202,7 +202,7 @@ public class IODispatcherWindows<C extends IOContext> extends AbstractIODispatch
                 resize();
             }
             long p = _wptr;
-            Unsafe.getUnsafe().putLong(p, fd);
+            Unsafe.UNSAFE.putLong(p, fd);
             _wptr = p + 8;
         }
 
@@ -214,15 +214,15 @@ public class IODispatcherWindows<C extends IOContext> extends AbstractIODispatch
         }
 
         private long get(int index) {
-            return Unsafe.getUnsafe().getLong(address + SelectAccessor.ARRAY_OFFSET + index * 8L);
+            return Unsafe.UNSAFE.getLong(address + SelectAccessor.ARRAY_OFFSET + index * 8L);
         }
 
         private int getCount() {
-            return Unsafe.getUnsafe().getInt(address + SelectAccessor.COUNT_OFFSET);
+            return Unsafe.UNSAFE.getInt(address + SelectAccessor.COUNT_OFFSET);
         }
 
         private void setCount(int count) {
-            Unsafe.getUnsafe().putInt(address + SelectAccessor.COUNT_OFFSET, count);
+            Unsafe.UNSAFE.putInt(address + SelectAccessor.COUNT_OFFSET, count);
         }
 
         private void reset() {
@@ -234,7 +234,7 @@ public class IODispatcherWindows<C extends IOContext> extends AbstractIODispatch
             int sz = size * 2;
             int l = SelectAccessor.ARRAY_OFFSET + 8 * sz;
             long _addr = Unsafe.malloc(l);
-            Unsafe.getUnsafe().copyMemory(address, _addr, lim - address);
+            Unsafe.UNSAFE.copyMemory(address, _addr, lim - address);
             Unsafe.free(address, lim - address);
             lim = _addr + l;
             size = sz;
@@ -243,4 +243,3 @@ public class IODispatcherWindows<C extends IOContext> extends AbstractIODispatch
         }
     }
 }
-

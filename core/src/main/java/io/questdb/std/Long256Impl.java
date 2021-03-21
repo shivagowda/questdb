@@ -35,10 +35,10 @@ public class Long256Impl implements Long256Sink, Long256, Sinkable, Long256Accep
     private long l3;
 
     public static void putNull(long appendPointer) {
-        Unsafe.getUnsafe().putLong(appendPointer, NULL_LONG256.getLong0());
-        Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES, NULL_LONG256.getLong1());
-        Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES * 2, NULL_LONG256.getLong2());
-        Unsafe.getUnsafe().putLong(appendPointer + Long.BYTES * 3, NULL_LONG256.getLong3());
+        Unsafe.UNSAFE.putLong(appendPointer, NULL_LONG256.getLong0());
+        Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES, NULL_LONG256.getLong1());
+        Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES * 2, NULL_LONG256.getLong2());
+        Unsafe.UNSAFE.putLong(appendPointer + Long.BYTES * 3, NULL_LONG256.getLong3());
     }
 
     public void copyFrom(Long256 value) {

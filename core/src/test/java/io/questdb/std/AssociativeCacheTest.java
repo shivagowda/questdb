@@ -72,23 +72,23 @@ public class AssociativeCacheTest {
         final DirectByteCharSequence dbcs = new DirectByteCharSequence();
 
         try {
-            Unsafe.getUnsafe().putByte(mem, (byte) 'A');
-            Unsafe.getUnsafe().putByte(mem + 1, (byte) 'B');
+            Unsafe.UNSAFE.putByte(mem, (byte) 'A');
+            Unsafe.UNSAFE.putByte(mem + 1, (byte) 'B');
 
             cache.put(dbcs.of(mem, mem + 2), "hello1");
 
-            Unsafe.getUnsafe().putByte(mem, (byte) 'C');
-            Unsafe.getUnsafe().putByte(mem + 1, (byte) 'D');
+            Unsafe.UNSAFE.putByte(mem, (byte) 'C');
+            Unsafe.UNSAFE.putByte(mem + 1, (byte) 'D');
 
             cache.put(dbcs, "hello2");
 
-            Unsafe.getUnsafe().putByte(mem, (byte) 'A');
-            Unsafe.getUnsafe().putByte(mem + 1, (byte) 'B');
+            Unsafe.UNSAFE.putByte(mem, (byte) 'A');
+            Unsafe.UNSAFE.putByte(mem + 1, (byte) 'B');
 
             Assert.assertEquals("hello1", cache.peek(dbcs));
 
-            Unsafe.getUnsafe().putByte(mem, (byte) 'C');
-            Unsafe.getUnsafe().putByte(mem + 1, (byte) 'D');
+            Unsafe.UNSAFE.putByte(mem, (byte) 'C');
+            Unsafe.UNSAFE.putByte(mem + 1, (byte) 'D');
 
             Assert.assertEquals("hello2", cache.peek(dbcs));
         } finally {

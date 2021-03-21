@@ -92,7 +92,7 @@ public class MinDateVectorAggregateFunction extends DateFunction implements Vect
 
     @Override
     public void initRosti(long pRosti) {
-        Unsafe.getUnsafe().putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), Long.MAX_VALUE);
+        Unsafe.UNSAFE.putLong(Rosti.getInitialValueSlot(pRosti, valueOffset), Long.MAX_VALUE);
     }
 
     @Override

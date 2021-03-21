@@ -70,7 +70,7 @@ public final class MimeTypesCache extends CharSequenceObjHashMap<CharSequence> {
             CharSequence contentType = null;
 
             while (p < hi) {
-                char b = (char) Unsafe.getUnsafe().getByte(p++);
+                char b = (char) Unsafe.UNSAFE.getByte(p++);
 
                 switch (b) {
                     case '#':

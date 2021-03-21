@@ -37,9 +37,9 @@ public final class Zip {
         Os.init();
         gzipHeader = Unsafe.calloc(Numbers.ceilPow2(gzipHeaderLen));
         long p = gzipHeader;
-        Unsafe.getUnsafe().putByte(p++, (byte) GZIP_MAGIC);
-        Unsafe.getUnsafe().putByte(p++, (byte) (GZIP_MAGIC >> 8));
-        Unsafe.getUnsafe().putByte(p, (byte) 8); // compression method
+        Unsafe.UNSAFE.putByte(p++, (byte) GZIP_MAGIC);
+        Unsafe.UNSAFE.putByte(p++, (byte) (GZIP_MAGIC >> 8));
+        Unsafe.UNSAFE.putByte(p, (byte) 8); // compression method
     }
 
     public static void init() {

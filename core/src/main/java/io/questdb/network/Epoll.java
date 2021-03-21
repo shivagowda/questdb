@@ -62,22 +62,22 @@ public final class Epoll implements Closeable {
     }
 
     public int control(long fd, long id, int cmd, int event) {
-        Unsafe.getUnsafe().putInt(events + EpollAccessor.EVENTS_OFFSET, event | EpollAccessor.EPOLLET | EpollAccessor.EPOLLONESHOT);
-        Unsafe.getUnsafe().putLong(events + EpollAccessor.DATA_OFFSET, id);
+        Unsafe.UNSAFE.putInt(events + EpollAccessor.EVENTS_OFFSET, event | EpollAccessor.EPOLLET | EpollAccessor.EPOLLONESHOT);
+        Unsafe.UNSAFE.putLong(events + EpollAccessor.DATA_OFFSET, id);
         return epf.epollCtl(epollFd, cmd, fd, events);
     }
 
     public long getData() {
-        return Unsafe.getUnsafe().getLong(_rPtr + EpollAccessor.DATA_OFFSET);
+        return Unsafe.UNSAFE.getLong(_rPtr + EpollAccessor.DATA_OFFSET);
     }
 
     public int getEvent() {
-        return Unsafe.getUnsafe().getInt(_rPtr + EpollAccessor.EVENTS_OFFSET);
+        return Unsafe.UNSAFE.getInt(_rPtr + EpollAccessor.EVENTS_OFFSET);
     }
 
     public void listen(long sfd) {
-        Unsafe.getUnsafe().putInt(events + EpollAccessor.EVENTS_OFFSET, EpollAccessor.EPOLLIN | EpollAccessor.EPOLLET);
-        Unsafe.getUnsafe().putLong(events + EpollAccessor.DATA_OFFSET, 0);
+        Unsafe.UNSAFE.putInt(events + EpollAccessor.EVENTS_OFFSET, EpollAccessor.EPOLLIN | EpollAccessor.EPOLLET);
+        Unsafe.UNSAFE.putLong(events + EpollAccessor.DATA_OFFSET, 0);
 
         if (epf.epollCtl(epollFd, EpollAccessor.EPOLL_CTL_ADD, sfd, events) != 0) {
             throw NetworkError.instance(epf.errno(), "epoll_ctl");

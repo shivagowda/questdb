@@ -388,7 +388,7 @@ public class LogFactory implements Closeable {
                         try {
                             Field f = cl.getDeclaredField(p);
                             if (f.getType() == String.class) {
-                                Unsafe.getUnsafe().putObject(w1, Unsafe.getUnsafe().objectFieldOffset(f), getProperty(properties, n));
+                                Unsafe.UNSAFE.putObject(w1, Unsafe.UNSAFE.objectFieldOffset(f), getProperty(properties, n));
                             }
                         } catch (Exception e) {
                             throw new LogError("Unknown property: " + n, e);

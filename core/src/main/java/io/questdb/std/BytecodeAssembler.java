@@ -375,7 +375,7 @@ public class BytecodeAssembler {
     public <T> Class<T> loadClass(Class<?> host) {
         byte[] b = new byte[position()];
         System.arraycopy(buf.array(), 0, b, 0, b.length);
-        return (Class<T>) Unsafe.getUnsafe().defineAnonymousClass(host, b, null);
+        return (Class<T>) Unsafe.UNSAFE.defineAnonymousClass(host, b, null);
     }
 
     public void lreturn() {

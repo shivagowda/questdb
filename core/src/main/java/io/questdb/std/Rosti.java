@@ -38,7 +38,7 @@ public final class Rosti {
         try {
             long p = mem;
             for (int i = 0; i < columnCount; i++) {
-                Unsafe.getUnsafe().putInt(p, types.getColumnType(i));
+                Unsafe.UNSAFE.putInt(p, types.getColumnType(i));
                 p += Integer.BYTES;
             }
             // this is not an exact size of memory allocated for Rosti, but this is useful to
@@ -172,27 +172,27 @@ public final class Rosti {
     public static native void keyedIntMaxLongWrapUp(long pRosti, int valueOffset, long valueAtNull);
 
     public static long getCtrl(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti);
+        return Unsafe.UNSAFE.getLong(pRosti);
     }
 
     public static long getSlots(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti + Long.BYTES);
+        return Unsafe.UNSAFE.getLong(pRosti + Long.BYTES);
     }
 
     public static long getSize(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti + 2 * Long.BYTES);
+        return Unsafe.UNSAFE.getLong(pRosti + 2 * Long.BYTES);
     }
 
     public static long getSlotShift(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti + 5 * Long.BYTES);
+        return Unsafe.UNSAFE.getLong(pRosti + 5 * Long.BYTES);
     }
 
     public static long getValueOffsets(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti + 7 * Long.BYTES);
+        return Unsafe.UNSAFE.getLong(pRosti + 7 * Long.BYTES);
     }
 
     public static long getInitialValuesSlot(long pRosti) {
-        return Unsafe.getUnsafe().getLong(pRosti + 8 * Long.BYTES);
+        return Unsafe.UNSAFE.getLong(pRosti + 8 * Long.BYTES);
     }
 
     public static void printRosti(long pRosti) {
@@ -202,12 +202,12 @@ public final class Rosti {
         final long start = ctrl;
         long count = getSize(pRosti);
         while (count > 0) {
-            byte b = Unsafe.getUnsafe().getByte(ctrl);
+            byte b = Unsafe.UNSAFE.getByte(ctrl);
             if ((b & 0x80) == 0) {
                 long p = slots + ((ctrl - start) << shift);
 
 //                System.out.println("offset = " + (((ctrl - start) << shift)));
-                System.out.println(Unsafe.getUnsafe().getInt(p) + " -> " + Unsafe.getUnsafe().getDouble(p + 12));
+                System.out.println(Unsafe.UNSAFE.getInt(p) + " -> " + Unsafe.UNSAFE.getDouble(p + 12));
 //                System.out.println(b + " at " + (ctrl-start));
                 count--;
             }
@@ -216,6 +216,6 @@ public final class Rosti {
     }
 
     public static long getInitialValueSlot(long pRosti, int columnIndex) {
-        return getInitialValuesSlot(pRosti) + Unsafe.getUnsafe().getInt(getValueOffsets(pRosti) + columnIndex * Integer.BYTES);
+        return getInitialValuesSlot(pRosti) + Unsafe.UNSAFE.getInt(getValueOffsets(pRosti) + columnIndex * Integer.BYTES);
     }
 }

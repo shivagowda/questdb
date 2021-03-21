@@ -75,7 +75,7 @@ public class HttpSqlExecutionInterruptor implements SqlExecutionInterruptor, Clo
         int index = 0;
         long ptr = buffer;
         while (index < nRead) {
-            byte b = Unsafe.getUnsafe().getByte(ptr + index);
+            byte b = Unsafe.UNSAFE.getByte(ptr + index);
             if (b != (byte) '\r' && b != (byte) '\n') {
                 break;
             }

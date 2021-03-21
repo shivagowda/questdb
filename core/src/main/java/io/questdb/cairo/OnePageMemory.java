@@ -141,12 +141,12 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
 
     @Override
     public final byte getByte(long offset) {
-        return Unsafe.getUnsafe().getByte(addressOf(offset));
+        return Unsafe.UNSAFE.getByte(addressOf(offset));
     }
 
     @Override
     public final double getDouble(long offset) {
-        return Unsafe.getUnsafe().getDouble(addressOf(offset));
+        return Unsafe.UNSAFE.getDouble(addressOf(offset));
     }
 
     @Override
@@ -156,22 +156,22 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
 
     @Override
     public final float getFloat(long offset) {
-        return Unsafe.getUnsafe().getFloat(addressOf(offset));
+        return Unsafe.UNSAFE.getFloat(addressOf(offset));
     }
 
     @Override
     public final int getInt(long offset) {
-        return Unsafe.getUnsafe().getInt(addressOf(offset));
+        return Unsafe.UNSAFE.getInt(addressOf(offset));
     }
 
     @Override
     public long getLong(long offset) {
-        return Unsafe.getUnsafe().getLong(addressOf(offset));
+        return Unsafe.UNSAFE.getLong(addressOf(offset));
     }
 
     @Override
     public final short getShort(long offset) {
-        return Unsafe.getUnsafe().getShort(absolutePointer + offset);
+        return Unsafe.UNSAFE.getShort(absolutePointer + offset);
     }
 
     @Override
@@ -193,10 +193,10 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
     @Override
     public void getLong256(long offset, CharSink sink) {
         final long a, b, c, d;
-        a = Unsafe.getUnsafe().getLong(addressOf(offset));
-        b = Unsafe.getUnsafe().getLong(addressOf(offset + Long.BYTES));
-        c = Unsafe.getUnsafe().getLong(addressOf(offset + Long.BYTES * 2));
-        d = Unsafe.getUnsafe().getLong(addressOf(offset + Long.BYTES * 3));
+        a = Unsafe.UNSAFE.getLong(addressOf(offset));
+        b = Unsafe.UNSAFE.getLong(addressOf(offset + Long.BYTES));
+        c = Unsafe.UNSAFE.getLong(addressOf(offset + Long.BYTES * 2));
+        d = Unsafe.UNSAFE.getLong(addressOf(offset + Long.BYTES * 3));
         Numbers.appendLong256(a, b, c, d, sink);
     }
 
@@ -208,7 +208,7 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
 
     @Override
     public final char getChar(long offset) {
-        return Unsafe.getUnsafe().getChar(addressOf(offset));
+        return Unsafe.UNSAFE.getChar(addressOf(offset));
     }
 
     @Override
@@ -255,10 +255,10 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
     }
 
     public void getLong256(long offset, Long256Sink sink) {
-        sink.setLong0(Unsafe.getUnsafe().getLong(addressOf(offset)));
-        sink.setLong1(Unsafe.getUnsafe().getLong(addressOf(offset + Long.BYTES)));
-        sink.setLong2(Unsafe.getUnsafe().getLong(addressOf(+offset + Long.BYTES * 2)));
-        sink.setLong3(Unsafe.getUnsafe().getLong(addressOf(offset + Long.BYTES * 3)));
+        sink.setLong0(Unsafe.UNSAFE.getLong(addressOf(offset)));
+        sink.setLong1(Unsafe.UNSAFE.getLong(addressOf(offset + Long.BYTES)));
+        sink.setLong2(Unsafe.UNSAFE.getLong(addressOf(+offset + Long.BYTES * 2)));
+        sink.setLong3(Unsafe.UNSAFE.getLong(addressOf(offset + Long.BYTES * 3)));
     }
 
     public final CharSequence getStr0(long offset, CharSequenceView view) {
@@ -306,14 +306,14 @@ public class OnePageMemory implements ReadOnlyColumn, Closeable {
         @Override
         public byte byteAt(long index) {
             assert index < len;
-            return Unsafe.getUnsafe().getByte(readAddress + index);
+            return Unsafe.UNSAFE.getByte(readAddress + index);
         }
 
         @Override
         public void copyTo(long address, final long start, final long length) {
             long bytesRemaining = Math.min(length, this.len - start);
             long offset = this.offset + start;
-            Unsafe.getUnsafe().copyMemory(page + offset, address, bytesRemaining);
+            Unsafe.UNSAFE.copyMemory(page + offset, address, bytesRemaining);
         }
 
         @Override

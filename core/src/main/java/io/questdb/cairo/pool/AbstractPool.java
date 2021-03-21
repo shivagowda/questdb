@@ -53,7 +53,7 @@ abstract class AbstractPool implements Closeable {
 
     @Override
     public final void close() {
-        if (Unsafe.getUnsafe().compareAndSwapInt(this, CLOSED, FALSE, TRUE)) {
+        if (Unsafe.UNSAFE.compareAndSwapInt(this, CLOSED, FALSE, TRUE)) {
             closePool();
         }
     }

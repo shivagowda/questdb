@@ -383,7 +383,7 @@ public class HttpConnectionContext implements IOContext, Locality, Mutable, Retr
     private void shiftReceiveBufferUnprocessedBytes(long start, int receivedBytes) {
         // Shift to start
         this.receivedBytes = receivedBytes;
-        Unsafe.getUnsafe().copyMemory(start, recvBuffer, receivedBytes);
+        Unsafe.UNSAFE.copyMemory(start, recvBuffer, receivedBytes);
         LOG.debug().$("peer is slow, waiting for bigger part to parse [multipart]").$();
     }
 

@@ -65,7 +65,7 @@ public final class TxWriter extends TxReader implements Closeable {
 
     public void bumpStructureVersion(ObjList<SymbolMapWriter> denseSymbolMapWriters) {
         txMem.putLong(TX_OFFSET_TXN, ++txn);
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
 
         txMem.putLong(TX_OFFSET_STRUCT_VERSION, ++structureVersion);
 
@@ -83,7 +83,7 @@ public final class TxWriter extends TxReader implements Closeable {
             symbolsCount = count;
         }
 
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
         txMem.putLong(TX_OFFSET_TXN_CHECK, txn);
     }
 
@@ -147,7 +147,7 @@ public final class TxWriter extends TxReader implements Closeable {
 
     public void commit(int commitMode, ObjList<SymbolMapWriter> denseSymbolMapWriters) {
         txMem.putLong(TX_OFFSET_TXN, ++txn);
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
 
         txMem.putLong(TX_OFFSET_TRANSIENT_ROW_COUNT, transientRowCount);
         txMem.putLong(TX_OFFSET_PARTITION_TABLE_VERSION, this.partitionTableVersion);
@@ -167,7 +167,7 @@ public final class TxWriter extends TxReader implements Closeable {
         symbolsCount = denseSymbolMapWriters.size();
         saveAttachedPartitionsToTx(symbolsCount);
 
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
         txMem.putLong(TX_OFFSET_TXN_CHECK, txn);
         if (commitMode != CommitMode.NOSYNC) {
             txMem.sync(0, commitMode == CommitMode.ASYNC);
@@ -234,14 +234,14 @@ public final class TxWriter extends TxReader implements Closeable {
     public void reset(long fixedRowCount, long transientRowCount, long maxTimestamp) {
         long txn = txMem.getLong(TX_OFFSET_TXN) + 1;
         txMem.putLong(TX_OFFSET_TXN, txn);
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
 
         txMem.putLong(TX_OFFSET_FIXED_ROW_COUNT, fixedRowCount);
         if (this.maxTimestamp != maxTimestamp) {
             txMem.putLong(TX_OFFSET_MAX_TIMESTAMP, maxTimestamp);
             txMem.putLong(TX_OFFSET_TRANSIENT_ROW_COUNT, transientRowCount);
         }
-        Unsafe.getUnsafe().storeFence();
+        Unsafe.UNSAFE.storeFence();
 
         // txn check
         txMem.putLong(TX_OFFSET_TXN_CHECK, txn);

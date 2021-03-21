@@ -162,7 +162,7 @@ public class HttpResponseSink implements Closeable, Mutable {
     private void deflate() {
         if (!compressedHeaderDone) {
             int len = Zip.gzipHeaderLen;
-            Unsafe.getUnsafe().copyMemory(Zip.gzipHeader, compressOutBuffer.getWriteAddress(len), len);
+            Unsafe.UNSAFE.copyMemory(Zip.gzipHeader, compressOutBuffer.getWriteAddress(len), len);
             compressOutBuffer.onWrite(len);
             compressedHeaderDone = true;
         }
@@ -226,8 +226,8 @@ public class HttpResponseSink implements Closeable, Mutable {
         boolean finished = chunkedRequestDone && ret == Zip.Z_STREAM_END;
         if (finished) {
             long p = compressOutBuffer.getWriteAddress(0);
-            Unsafe.getUnsafe().putInt(p, crc); // crc
-            Unsafe.getUnsafe().putInt(p + 4, (int) total); // total
+            Unsafe.UNSAFE.putInt(p, crc); // crc
+            Unsafe.UNSAFE.putInt(p + 4, (int) total); // total
             compressOutBuffer.onWrite(8);
             compressionComplete = true;
         }
@@ -334,7 +334,7 @@ public class HttpResponseSink implements Closeable, Mutable {
 
         @Override
         public CharSink put(char c) {
-            Unsafe.getUnsafe().putByte(buffer.getWriteAddress(1), (byte) c);
+            Unsafe.UNSAFE.putByte(buffer.getWriteAddress(1), (byte) c);
             buffer.onWrite(1);
             return this;
         }
@@ -643,8 +643,8 @@ public class HttpResponseSink implements Closeable, Mutable {
         }
 
         void write64BitZeroPadding() {
-            Unsafe.getUnsafe().putLong(bufStartOfData - 8, 0);
-            Unsafe.getUnsafe().putLong(_wptr, 0);
+            Unsafe.UNSAFE.putLong(bufStartOfData - 8, 0);
+            Unsafe.UNSAFE.putLong(_wptr, 0);
         }
 
         @Override
@@ -657,7 +657,7 @@ public class HttpResponseSink implements Closeable, Mutable {
 
         @Override
         public CharSink put(char c) {
-            Unsafe.getUnsafe().putByte(getWriteAddress(1), (byte) c);
+            Unsafe.UNSAFE.putByte(getWriteAddress(1), (byte) c);
             onWrite(1);
             return this;
         }

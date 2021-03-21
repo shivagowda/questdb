@@ -194,13 +194,13 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
                 throw HttpException.instance("header is too large");
             }
 
-            char b = (char) Unsafe.getUnsafe().getByte(p++);
+            char b = (char) Unsafe.UNSAFE.getByte(p++);
 
             if (b == '\r') {
                 continue;
             }
 
-            Unsafe.getUnsafe().putByte(_wptr++, (byte) b);
+            Unsafe.UNSAFE.putByte(_wptr++, (byte) b);
 
             switch (b) {
                 case ':':
@@ -248,7 +248,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
         DirectByteCharSequence name = null;
 
         while (p <= hi) {
-            char b = (char) Unsafe.getUnsafe().getByte(p++);
+            char b = (char) Unsafe.UNSAFE.getByte(p++);
 
             if (b == ' ' && swallowSpace) {
                 _lo = p;
@@ -308,7 +308,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
         boolean swallowSpace = true;
 
         while (p <= hi) {
-            char b = (char) Unsafe.getUnsafe().getByte(p++);
+            char b = (char) Unsafe.UNSAFE.getByte(p++);
 
             if (b == ' ' && swallowSpace) {
                 _lo = p;
@@ -364,7 +364,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
                 throw HttpException.instance("url is too long");
             }
 
-            char b = (char) Unsafe.getUnsafe().getByte(p++);
+            char b = (char) Unsafe.UNSAFE.getByte(p++);
 
             if (b == '\r') {
                 continue;
@@ -404,7 +404,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
                 default:
                     break;
             }
-            Unsafe.getUnsafe().putByte(_wptr++, (byte) b);
+            Unsafe.UNSAFE.putByte(_wptr++, (byte) b);
         }
         return (int) (p - lo);
     }
@@ -418,7 +418,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
         CharSequence name = null;
 
         while (rp < hi) {
-            char b = (char) Unsafe.getUnsafe().getByte(rp++);
+            char b = (char) Unsafe.UNSAFE.getByte(rp++);
 
             switch (b) {
                 case '=':
@@ -437,13 +437,13 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
                     _lo = rp - offset;
                     break;
                 case '+':
-                    Unsafe.getUnsafe().putByte(wp++, (byte) ' ');
+                    Unsafe.UNSAFE.putByte(wp++, (byte) ' ');
                     continue;
                 case '%':
                     try {
                         if (rp + 1 < hi) {
                             byte bb = (byte) Numbers.parseHexInt(temp.of(rp, rp += 2));
-                            Unsafe.getUnsafe().putByte(wp++, bb);
+                            Unsafe.UNSAFE.putByte(wp++, bb);
                             offset += 2;
                             continue;
                         }
@@ -453,7 +453,7 @@ public class HttpHeaderParser implements Mutable, Closeable, HttpRequestHeader {
                 default:
                     break;
             }
-            Unsafe.getUnsafe().putByte(wp++, (byte) b);
+            Unsafe.UNSAFE.putByte(wp++, (byte) b);
         }
 
         if (_lo < wp) {

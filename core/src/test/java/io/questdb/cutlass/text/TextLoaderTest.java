@@ -2691,11 +2691,11 @@ public class TextLoaderTest extends AbstractGriffinTest {
         long smallBuf = Unsafe.malloc(1);
         try {
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putByte(buf + i, json[i]);
+                Unsafe.UNSAFE.putByte(buf + i, json[i]);
             }
 
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putByte(smallBuf, Unsafe.getUnsafe().getByte(buf + i));
+                Unsafe.UNSAFE.putByte(smallBuf, Unsafe.UNSAFE.getByte(buf + i));
                 textLoader.parse(smallBuf, smallBuf + 1, AllowAllCairoSecurityContext.INSTANCE);
             }
             textLoader.wrapUp();
@@ -2791,7 +2791,7 @@ public class TextLoaderTest extends AbstractGriffinTest {
         long smallBuf = Unsafe.malloc(1);
         try {
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putByte(buf + i, manipulator.translate(i, len, bytes[i]));
+                Unsafe.UNSAFE.putByte(buf + i, manipulator.translate(i, len, bytes[i]));
             }
 
             if (firstBufSize < len) {
@@ -2799,7 +2799,7 @@ public class TextLoaderTest extends AbstractGriffinTest {
                 textLoader.setState(TextLoader.LOAD_DATA);
 
                 for (int i = firstBufSize; i < len; i++) {
-                    Unsafe.getUnsafe().putByte(smallBuf, Unsafe.getUnsafe().getByte(buf + i));
+                    Unsafe.UNSAFE.putByte(smallBuf, Unsafe.UNSAFE.getByte(buf + i));
                     textLoader.parse(smallBuf, smallBuf + 1, AllowAllCairoSecurityContext.INSTANCE);
                 }
             } else {

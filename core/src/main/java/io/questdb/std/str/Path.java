@@ -61,7 +61,7 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
         if (1 + (wptr - ptr) >= capacity) {
             extend((int) (16 + (wptr - ptr)));
         }
-        Unsafe.getUnsafe().putByte(wptr++, (byte) 0);
+        Unsafe.UNSAFE.putByte(wptr++, (byte) 0);
         return this;
     }
 
@@ -103,12 +103,12 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
                 extend(len * 2 + OVERHEAD);
             }
 
-            byte b = Unsafe.getUnsafe().getByte(p++);
+            byte b = Unsafe.UNSAFE.getByte(p++);
             if (b == 0) {
                 break;
             }
 
-            Unsafe.getUnsafe().putByte(wptr, (byte) (b == '/' && Os.type == Os.WINDOWS ? '\\' : b));
+            Unsafe.UNSAFE.putByte(wptr, (byte) (b == '/' && Os.type == Os.WINDOWS ? '\\' : b));
             wptr++;
             len++;
         }
@@ -156,7 +156,7 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
         if (1 + len >= capacity) {
             extend(16 + len);
         }
-        Unsafe.getUnsafe().putByte(wptr++, (byte) c);
+        Unsafe.UNSAFE.putByte(wptr++, (byte) c);
         len++;
         return this;
     }
@@ -178,7 +178,7 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
 
     @Override
     public char charAt(int index) {
-        return (char) Unsafe.getUnsafe().getByte(ptr + index);
+        return (char) Unsafe.UNSAFE.getByte(ptr + index);
     }
 
     @Override
@@ -237,7 +237,7 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
 
     protected final void ensureSeparator() {
         if (missingTrailingSeparator()) {
-            Unsafe.getUnsafe().putByte(wptr, (byte) Files.SEPARATOR);
+            Unsafe.UNSAFE.putByte(wptr, (byte) Files.SEPARATOR);
             wptr++;
             this.len++;
         }
@@ -245,7 +245,7 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
 
     private void extend(int len) {
         long p = Unsafe.malloc(len + 1);
-        Unsafe.getUnsafe().copyMemory(ptr, p, this.len);
+        Unsafe.UNSAFE.copyMemory(ptr, p, this.len);
         long d = wptr - ptr;
         Unsafe.free(this.ptr, this.capacity + 1);
         this.ptr = p;
@@ -254,6 +254,6 @@ public class Path extends AbstractCharSink implements Closeable, LPSZ {
     }
 
     private boolean missingTrailingSeparator() {
-        return len > 0 && Unsafe.getUnsafe().getByte(wptr - 1) != Files.SEPARATOR;
+        return len > 0 && Unsafe.UNSAFE.getByte(wptr - 1) != Files.SEPARATOR;
     }
 }

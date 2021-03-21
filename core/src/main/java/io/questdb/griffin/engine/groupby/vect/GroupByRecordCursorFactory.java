@@ -90,10 +90,10 @@ public class GroupByRecordCursorFactory implements RecordCursorFactory {
             // remember, single key for now
             switch (columnTypes.getColumnType(0)) {
                 case ColumnType.INT:
-                    Unsafe.getUnsafe().putInt(Rosti.getInitialValueSlot(pRosti[i], 0), Numbers.INT_NaN);
+                    Unsafe.UNSAFE.putInt(Rosti.getInitialValueSlot(pRosti[i], 0), Numbers.INT_NaN);
                     break;
                 case ColumnType.SYMBOL:
-                    Unsafe.getUnsafe().putInt(Rosti.getInitialValueSlot(pRosti[i], 0), SymbolTable.VALUE_IS_NULL);
+                    Unsafe.UNSAFE.putInt(Rosti.getInitialValueSlot(pRosti[i], 0), SymbolTable.VALUE_IS_NULL);
                     break;
                 default:
             }
@@ -144,7 +144,7 @@ public class GroupByRecordCursorFactory implements RecordCursorFactory {
             long columnOffsets
     ) {
         for (int i = start; i < end; i++) {
-            columnSkewIndex.add(Unsafe.getUnsafe().getInt(columnOffsets + vafList.getQuick(i).getValueOffset() * Integer.BYTES));
+            columnSkewIndex.add(Unsafe.UNSAFE.getInt(columnOffsets + vafList.getQuick(i).getValueOffset() * Integer.BYTES));
         }
     }
 
@@ -319,7 +319,7 @@ public class GroupByRecordCursorFactory implements RecordCursorFactory {
         @Override
         public boolean hasNext() {
             while (count < size) {
-                byte b = Unsafe.getUnsafe().getByte(ctrl);
+                byte b = Unsafe.UNSAFE.getByte(ctrl);
                 if ((b & 0x80) != 0) {
                     ctrl++;
                     continue;
@@ -408,7 +408,7 @@ public class GroupByRecordCursorFactory implements RecordCursorFactory {
 
             @Override
             public double getDouble(int col) {
-                return Unsafe.getUnsafe().getDouble(getValueOffset(col));
+                return Unsafe.UNSAFE.getDouble(getValueOffset(col));
             }
 
             @Override
@@ -418,12 +418,12 @@ public class GroupByRecordCursorFactory implements RecordCursorFactory {
 
             @Override
             public int getInt(int col) {
-                return Unsafe.getUnsafe().getInt(getValueOffset(col));
+                return Unsafe.UNSAFE.getInt(getValueOffset(col));
             }
 
             @Override
             public long getLong(int col) {
-                return Unsafe.getUnsafe().getLong(getValueOffset(col));
+                return Unsafe.UNSAFE.getLong(getValueOffset(col));
             }
 
             @Override

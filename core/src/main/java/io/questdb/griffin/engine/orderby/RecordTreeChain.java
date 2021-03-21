@@ -72,43 +72,43 @@ public class RecordTreeChain implements Closeable, Mutable {
     }
 
     private static void setLeft(long blockAddress, long left) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_LEFT, left);
+        Unsafe.UNSAFE.putLong(blockAddress + O_LEFT, left);
     }
 
     private static long rightOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_RIGHT);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_RIGHT);
     }
 
     private static long leftOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_LEFT);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_LEFT);
     }
 
     private static void setParent(long blockAddress, long parent) {
-        Unsafe.getUnsafe().putLong(blockAddress, parent);
+        Unsafe.UNSAFE.putLong(blockAddress, parent);
     }
 
     private static long refOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_REF);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_REF);
     }
 
     private static long topOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress + O_TOP);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress + O_TOP);
     }
 
     private static void setRef(long blockAddress, long recRef) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_REF, recRef);
+        Unsafe.UNSAFE.putLong(blockAddress + O_REF, recRef);
     }
 
     private static void setTop(long blockAddress, long recRef) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_TOP, recRef);
+        Unsafe.UNSAFE.putLong(blockAddress + O_TOP, recRef);
     }
 
     private static void setRight(long blockAddress, long right) {
-        Unsafe.getUnsafe().putLong(blockAddress + O_RIGHT, right);
+        Unsafe.UNSAFE.putLong(blockAddress + O_RIGHT, right);
     }
 
     private static long parentOf(long blockAddress) {
-        return blockAddress == -1 ? -1 : Unsafe.getUnsafe().getLong(blockAddress);
+        return blockAddress == -1 ? -1 : Unsafe.UNSAFE.getLong(blockAddress);
     }
 
     private static long parent2Of(long blockAddress) {
@@ -119,11 +119,11 @@ public class RecordTreeChain implements Closeable, Mutable {
         if (blockAddress == -1) {
             return;
         }
-        Unsafe.getUnsafe().putByte(blockAddress + O_COLOUR, colour);
+        Unsafe.UNSAFE.putByte(blockAddress + O_COLOUR, colour);
     }
 
     private static byte colorOf(long blockAddress) {
-        return blockAddress == -1 ? BLACK : Unsafe.getUnsafe().getByte(blockAddress + O_COLOUR);
+        return blockAddress == -1 ? BLACK : Unsafe.UNSAFE.getByte(blockAddress + O_COLOUR);
     }
 
     private static long successor(long current) {

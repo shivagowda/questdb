@@ -391,7 +391,7 @@ public class TableReader implements Closeable, SymbolTableSource {
     }
 
     public void reshuffleSymbolMapReaders(long pTransitionIndex) {
-        final int columnCount = Unsafe.getUnsafe().getInt(pTransitionIndex + 4);
+        final int columnCount = Unsafe.UNSAFE.getInt(pTransitionIndex + 4);
         final long index = pTransitionIndex + 8;
         final long stateAddress = index + columnCount * 8L;
 
@@ -399,19 +399,19 @@ public class TableReader implements Closeable, SymbolTableSource {
             symbolMapReaders.setPos(columnCount);
         }
 
-        Unsafe.getUnsafe().setMemory(stateAddress, columnCount, (byte) 0);
+        Unsafe.UNSAFE.setMemory(stateAddress, columnCount, (byte) 0);
 
         // this is a silly exercise in walking the index
         for (int i = 0; i < columnCount; i++) {
 
             // prevent writing same entry once
-            if (Unsafe.getUnsafe().getByte(stateAddress + i) == -1) {
+            if (Unsafe.UNSAFE.getByte(stateAddress + i) == -1) {
                 continue;
             }
 
-            Unsafe.getUnsafe().putByte(stateAddress + i, (byte) -1);
+            Unsafe.UNSAFE.putByte(stateAddress + i, (byte) -1);
 
-            int copyFrom = Unsafe.getUnsafe().getInt(index + i * 8L);
+            int copyFrom = Unsafe.UNSAFE.getInt(index + i * 8L);
 
             // don't copy entries to themselves, unless symbol map was deleted
             if (copyFrom == i + 1 && copyFrom < columnCount) {
@@ -429,20 +429,20 @@ public class TableReader implements Closeable, SymbolTableSource {
             if (copyFrom > 0) {
                 tmp = copyOrRenewSymbolMapReader(symbolMapReaders.getAndSetQuick(copyFrom - 1, null), i);
 
-                int copyTo = Unsafe.getUnsafe().getInt(index + i * 8L + 4);
+                int copyTo = Unsafe.UNSAFE.getInt(index + i * 8L + 4);
 
                 // now we copied entry, what do we do with value that was already there?
                 // do we copy it somewhere else?
                 while (copyTo > 0) {
                     // Yeah, we do. This can get recursive!
                     // prevent writing same entry twice
-                    if (Unsafe.getUnsafe().getByte(stateAddress + copyTo - 1) == -1) {
+                    if (Unsafe.UNSAFE.getByte(stateAddress + copyTo - 1) == -1) {
                         break;
                     }
-                    Unsafe.getUnsafe().putByte(stateAddress + copyTo - 1, (byte) -1);
+                    Unsafe.UNSAFE.putByte(stateAddress + copyTo - 1, (byte) -1);
 
                     tmp = copyOrRenewSymbolMapReader(tmp, copyTo - 1);
-                    copyTo = Unsafe.getUnsafe().getInt(index + (copyTo - 1) * 8L + 4);
+                    copyTo = Unsafe.UNSAFE.getInt(index + (copyTo - 1) * 8L + 4);
                 }
                 Misc.free(tmp);
             } else {
@@ -488,10 +488,10 @@ public class TableReader implements Closeable, SymbolTableSource {
     }
 
     private static boolean isEntryToBeProcessed(long address, int index) {
-        if (Unsafe.getUnsafe().getByte(address + index) == -1) {
+        if (Unsafe.UNSAFE.getByte(address + index) == -1) {
             return false;
         }
-        Unsafe.getUnsafe().putByte(address + index, (byte) -1);
+        Unsafe.UNSAFE.putByte(address + index, (byte) -1);
         return true;
     }
 
@@ -623,7 +623,7 @@ public class TableReader implements Closeable, SymbolTableSource {
                 long partitionRowCount = openPartitionSize.getQuick(partitionIndex);
                 final boolean lastPartition = partitionIndex == partitionCount - 1;
                 for (int i = 0; i < columnCount; i++) {
-                    final int copyFrom = Unsafe.getUnsafe().getInt(pIndexBase + i * 8L) - 1;
+                    final int copyFrom = Unsafe.UNSAFE.getInt(pIndexBase + i * 8L) - 1;
                     if (copyFrom > -1) {
                         fetchColumnsFrom(this.columns, this.columnTops, this.bitmapIndexes, oldBase, copyFrom);
                         copyColumnsTo(columns, columnTops, indexReaders, base, i, partitionRowCount, lastPartition);
@@ -889,21 +889,21 @@ public class TableReader implements Closeable, SymbolTableSource {
             }
 
             // make sure this isn't re-ordered
-            Unsafe.getUnsafe().loadFence();
+            Unsafe.UNSAFE.loadFence();
 
             // do start and end sequences match? if so we have a chance at stable read
             if (txn == txFile.readTxnCheck()) {
                 // great, we seem to have got stable read, lets do some reading
                 // and check later if it was worth it
 
-                Unsafe.getUnsafe().loadFence();
+                Unsafe.UNSAFE.loadFence();
                 txFile.readUnchecked();
 
                 this.symbolCountSnapshot.clear();
                 this.txFile.readSymbolCounts(this.symbolCountSnapshot);
 
 
-                Unsafe.getUnsafe().loadFence();
+                Unsafe.UNSAFE.loadFence();
                 // ok, we have snapshot, check if our snapshot is stable
                 if (txn == txFile.getTxn()) {
                     // good, very stable, congrats
@@ -1015,7 +1015,7 @@ public class TableReader implements Closeable, SymbolTableSource {
         long pTransitionIndex = metadata.createTransitionIndex();
         try {
             metadata.applyTransitionIndex(pTransitionIndex);
-            final int columnCount = Unsafe.getUnsafe().getInt(pTransitionIndex + 4);
+            final int columnCount = Unsafe.UNSAFE.getInt(pTransitionIndex + 4);
 
             int columnCountBits = getColumnBits(columnCount);
             // when a column is added we cannot easily reshuffle columns in-place
@@ -1132,12 +1132,12 @@ public class TableReader implements Closeable, SymbolTableSource {
                 final long partitionRowCount = openPartitionSize.getQuick(partitionIndex);
                 final boolean lastPartition = partitionIndex == partitionCount - 1;
 
-                Unsafe.getUnsafe().setMemory(pState, columnCount, (byte) 0);
+                Unsafe.UNSAFE.setMemory(pState, columnCount, (byte) 0);
 
                 for (int i = 0; i < columnCount; i++) {
 
                     if (isEntryToBeProcessed(pState, i)) {
-                        final int copyFrom = Unsafe.getUnsafe().getInt(pIndexBase + i * 8L) - 1;
+                        final int copyFrom = Unsafe.UNSAFE.getInt(pIndexBase + i * 8L) - 1;
 
                         if (copyFrom == i) {
                             // It appears that column hasn't changed its position. There are three possibilities here:
@@ -1157,10 +1157,10 @@ public class TableReader implements Closeable, SymbolTableSource {
                         if (copyFrom > -1) {
                             fetchColumnsFrom(this.columns, this.columnTops, this.bitmapIndexes, base, copyFrom);
                             copyColumnsTo(this.columns, this.columnTops, this.bitmapIndexes, base, i, partitionRowCount, lastPartition);
-                            int copyTo = Unsafe.getUnsafe().getInt(pIndexBase + i * 8L + 4) - 1;
+                            int copyTo = Unsafe.UNSAFE.getInt(pIndexBase + i * 8L + 4) - 1;
                             while (copyTo > -1 && isEntryToBeProcessed(pState, copyTo)) {
                                 copyColumnsTo(this.columns, this.columnTops, this.bitmapIndexes, base, copyTo, partitionRowCount, lastPartition);
-                                copyTo = Unsafe.getUnsafe().getInt(pIndexBase + (copyTo - 1) * 8L + 4);
+                                copyTo = Unsafe.UNSAFE.getInt(pIndexBase + (copyTo - 1) * 8L + 4);
                             }
                             Misc.free(tempCopyStruct.mem1);
                             Misc.free(tempCopyStruct.mem2);

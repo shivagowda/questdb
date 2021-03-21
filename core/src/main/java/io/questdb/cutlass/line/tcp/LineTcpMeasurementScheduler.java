@@ -447,10 +447,10 @@ class LineTcpMeasurementScheduler implements Closeable {
                 timestamp = timestampAdapter.getMicros(timestamp);
             }
             long bufPos = bufLo;
-            Unsafe.getUnsafe().putLong(bufPos, timestamp);
+            Unsafe.UNSAFE.putLong(bufPos, timestamp);
             bufPos += Long.BYTES;
             int nEntities = protoParser.getnEntities();
-            Unsafe.getUnsafe().putInt(bufPos, nEntities);
+            Unsafe.UNSAFE.putInt(bufPos, nEntities);
             bufPos += Integer.BYTES;
             for (int nEntity = 0; nEntity < nEntities; nEntity++) {
                 assert bufPos < (bufLo + bufSize + 6);
@@ -458,12 +458,12 @@ class LineTcpMeasurementScheduler implements Closeable {
                 int colIndex = localDetails.getColumnIndex(entity.getName());
                 if (colIndex < 0) {
                     int colNameLen = entity.getName().length();
-                    Unsafe.getUnsafe().putInt(bufPos, -1 * colNameLen);
+                    Unsafe.UNSAFE.putInt(bufPos, -1 * colNameLen);
                     bufPos += Integer.BYTES;
-                    Unsafe.getUnsafe().copyMemory(entity.getName().getLo(), bufPos, colNameLen);
+                    Unsafe.UNSAFE.copyMemory(entity.getName().getLo(), bufPos, colNameLen);
                     bufPos += colNameLen;
                 } else {
-                    Unsafe.getUnsafe().putInt(bufPos, colIndex);
+                    Unsafe.UNSAFE.putInt(bufPos, colIndex);
                     bufPos += Integer.BYTES;
                 }
                 byte entityType = entity.getType();
@@ -481,38 +481,38 @@ class LineTcpMeasurementScheduler implements Closeable {
                         int symIndex = tableUpdateDetails.getSymbolIndex(localDetails, colIndex, floatingCharSink);
                         if (symIndex != SymbolTable.VALUE_NOT_FOUND) {
                             bufPos = tmpBufPos;
-                            Unsafe.getUnsafe().putByte(bufPos, NewLineProtoParser.ENTITY_TYPE_CACHED_TAG);
+                            Unsafe.UNSAFE.putByte(bufPos, NewLineProtoParser.ENTITY_TYPE_CACHED_TAG);
                             bufPos += Byte.BYTES;
-                            Unsafe.getUnsafe().putInt(bufPos, symIndex);
+                            Unsafe.UNSAFE.putInt(bufPos, symIndex);
                             bufPos += Integer.BYTES;
                         } else {
-                            Unsafe.getUnsafe().putByte(tmpBufPos, entity.getType());
+                            Unsafe.UNSAFE.putByte(tmpBufPos, entity.getType());
                             tmpBufPos += Byte.BYTES;
-                            Unsafe.getUnsafe().putInt(tmpBufPos, l);
+                            Unsafe.UNSAFE.putInt(tmpBufPos, l);
                             bufPos = hi;
                         }
                         break;
                     }
                     case NewLineProtoParser.ENTITY_TYPE_INTEGER: {
-                        Unsafe.getUnsafe().putByte(bufPos, entity.getType());
+                        Unsafe.UNSAFE.putByte(bufPos, entity.getType());
                         bufPos += Byte.BYTES;
-                        Unsafe.getUnsafe().putLong(bufPos, entity.getIntegerValue());
+                        Unsafe.UNSAFE.putLong(bufPos, entity.getIntegerValue());
                         bufPos += Long.BYTES;
                         break;
                     }
                     case NewLineProtoParser.ENTITY_TYPE_FLOAT: {
-                        Unsafe.getUnsafe().putByte(bufPos, entity.getType());
+                        Unsafe.UNSAFE.putByte(bufPos, entity.getType());
                         bufPos += Byte.BYTES;
-                        Unsafe.getUnsafe().putDouble(bufPos, entity.getFloatValue());
+                        Unsafe.UNSAFE.putDouble(bufPos, entity.getFloatValue());
                         bufPos += Double.BYTES;
                         break;
                     }
                     case NewLineProtoParser.ENTITY_TYPE_STRING:
                     case NewLineProtoParser.ENTITY_TYPE_LONG256: {
-                        Unsafe.getUnsafe().putByte(bufPos, entity.getType());
+                        Unsafe.UNSAFE.putByte(bufPos, entity.getType());
                         bufPos += Byte.BYTES;
                         int l = entity.getValue().length();
-                        Unsafe.getUnsafe().putInt(bufPos, l);
+                        Unsafe.UNSAFE.putInt(bufPos, l);
                         bufPos += Integer.BYTES;
                         long hi = bufPos + 2L * l;
                         floatingCharSink.of(bufPos, hi);
@@ -523,9 +523,9 @@ class LineTcpMeasurementScheduler implements Closeable {
                         break;
                     }
                     case NewLineProtoParser.ENTITY_TYPE_BOOLEAN: {
-                        Unsafe.getUnsafe().putByte(bufPos, entity.getType());
+                        Unsafe.UNSAFE.putByte(bufPos, entity.getType());
                         bufPos += Byte.BYTES;
-                        Unsafe.getUnsafe().putByte(bufPos, (byte) (entity.getBooleanValue() ? 1 : 0));
+                        Unsafe.UNSAFE.putByte(bufPos, (byte) (entity.getBooleanValue() ? 1 : 0));
                         bufPos += Byte.BYTES;
                         break;
                     }
@@ -540,21 +540,21 @@ class LineTcpMeasurementScheduler implements Closeable {
             try {
                 TableWriter writer = tableUpdateDetails.getWriter();
                 long bufPos = bufLo;
-                long timestamp = Unsafe.getUnsafe().getLong(bufPos);
+                long timestamp = Unsafe.UNSAFE.getLong(bufPos);
                 bufPos += Long.BYTES;
                 if (timestamp == NewLineProtoParser.NULL_TIMESTAMP) {
                     timestamp = clock.getTicks();
                 }
                 row = writer.newRow(timestamp);
-                int nEntities = Unsafe.getUnsafe().getInt(bufPos);
+                int nEntities = Unsafe.UNSAFE.getInt(bufPos);
                 bufPos += Integer.BYTES;
                 long firstEntityBufPos = bufPos;
                 for (int nEntity = 0; nEntity < nEntities; nEntity++) {
-                    int colIndex = Unsafe.getUnsafe().getInt(bufPos);
+                    int colIndex = Unsafe.UNSAFE.getInt(bufPos);
                     bufPos += Integer.BYTES;
                     byte entityType;
                     if (colIndex >= 0) {
-                        entityType = Unsafe.getUnsafe().getByte(bufPos);
+                        entityType = Unsafe.UNSAFE.getByte(bufPos);
                         bufPos += Byte.BYTES;
                     } else {
                         int colNameLen = -1 * colIndex;
@@ -565,7 +565,7 @@ class LineTcpMeasurementScheduler implements Closeable {
                             throw CairoException.instance(0).put("invalid UTF8 in column name ").put(job.floatingCharSink.asCharSequence(nameLo, nameHi));
                         }
                         bufPos = nameHi;
-                        entityType = Unsafe.getUnsafe().getByte(bufPos);
+                        entityType = Unsafe.UNSAFE.getByte(bufPos);
                         bufPos += Byte.BYTES;
                         colIndex = writer.getMetadata().getColumnIndexQuiet(job.charSink);
                         if (colIndex < 0) {
@@ -589,7 +589,7 @@ class LineTcpMeasurementScheduler implements Closeable {
 
                     switch (entityType) {
                         case NewLineProtoParser.ENTITY_TYPE_TAG: {
-                            int len = Unsafe.getUnsafe().getInt(bufPos);
+                            int len = Unsafe.UNSAFE.getInt(bufPos);
                             bufPos += Integer.BYTES;
                             long hi = bufPos + 2L * len;
                             job.floatingCharSink.asCharSequence(bufPos, hi);
@@ -600,7 +600,7 @@ class LineTcpMeasurementScheduler implements Closeable {
                         }
 
                         case NewLineProtoParser.ENTITY_TYPE_CACHED_TAG: {
-                            int symIndex = Unsafe.getUnsafe().getInt(bufPos);
+                            int symIndex = Unsafe.UNSAFE.getInt(bufPos);
                             bufPos += Integer.BYTES;
                             row.putSymIndex(colIndex, symIndex);
                             break;
@@ -608,7 +608,7 @@ class LineTcpMeasurementScheduler implements Closeable {
 
                         case NewLineProtoParser.ENTITY_TYPE_INTEGER: {
                             final int colType = writer.getMetadata().getColumnType(colIndex);
-                            long v = Unsafe.getUnsafe().getLong(bufPos);
+                            long v = Unsafe.UNSAFE.getLong(bufPos);
                             bufPos += Long.BYTES;
                             switch (colType) {
                                 case ColumnType.LONG:
@@ -651,7 +651,7 @@ class LineTcpMeasurementScheduler implements Closeable {
                         }
 
                         case NewLineProtoParser.ENTITY_TYPE_FLOAT: {
-                            double v = Unsafe.getUnsafe().getDouble(bufPos);
+                            double v = Unsafe.UNSAFE.getDouble(bufPos);
                             bufPos += Double.BYTES;
                             final int colType = writer.getMetadata().getColumnType(colIndex);
                             switch (colType) {
@@ -670,14 +670,14 @@ class LineTcpMeasurementScheduler implements Closeable {
                         }
 
                         case NewLineProtoParser.ENTITY_TYPE_BOOLEAN: {
-                            byte b = Unsafe.getUnsafe().getByte(bufPos);
+                            byte b = Unsafe.UNSAFE.getByte(bufPos);
                             bufPos += Byte.BYTES;
                             row.putBool(colIndex, b == 1);
                             break;
                         }
 
                         case NewLineProtoParser.ENTITY_TYPE_STRING: {
-                            int len = Unsafe.getUnsafe().getInt(bufPos);
+                            int len = Unsafe.UNSAFE.getInt(bufPos);
                             bufPos += Integer.BYTES;
                             long hi = bufPos + 2L * len;
                             job.floatingCharSink.asCharSequence(bufPos, hi);
@@ -687,7 +687,7 @@ class LineTcpMeasurementScheduler implements Closeable {
                         }
 
                         case NewLineProtoParser.ENTITY_TYPE_LONG256: {
-                            int len = Unsafe.getUnsafe().getInt(bufPos);
+                            int len = Unsafe.UNSAFE.getInt(bufPos);
                             bufPos += Integer.BYTES;
                             long hi = bufPos + 2L * len;
                             job.floatingCharSink.asCharSequence(bufPos, hi);

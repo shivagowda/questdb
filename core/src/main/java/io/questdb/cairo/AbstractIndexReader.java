@@ -96,13 +96,13 @@ public abstract class AbstractIndexReader implements BitmapIndexReader {
             while (true) {
                 long seq = this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE);
 
-                Unsafe.getUnsafe().loadFence();
+                Unsafe.UNSAFE.loadFence();
                 if (this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE_CHECK) == seq) {
 
                     blockValueCountMod = this.keyMem.getInt(BitmapIndexUtils.KEY_RESERVED_OFFSET_BLOCK_VALUE_COUNT) - 1;
                     keyCount = this.keyMem.getInt(BitmapIndexUtils.KEY_RESERVED_OFFSET_KEY_COUNT);
 
-                    Unsafe.getUnsafe().loadFence();
+                    Unsafe.UNSAFE.loadFence();
                     if (this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE) == seq) {
                         break;
                     }
@@ -138,12 +138,12 @@ public abstract class AbstractIndexReader implements BitmapIndexReader {
         while (true) {
             long seq = this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE);
 
-            Unsafe.getUnsafe().loadFence();
+            Unsafe.UNSAFE.loadFence();
             if (this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE_CHECK) == seq) {
 
                 keyCount = this.keyMem.getInt(BitmapIndexUtils.KEY_RESERVED_OFFSET_KEY_COUNT);
 
-                Unsafe.getUnsafe().loadFence();
+                Unsafe.UNSAFE.loadFence();
                 if (seq == this.keyMem.getLong(BitmapIndexUtils.KEY_RESERVED_OFFSET_SEQUENCE)) {
                     break;
                 }

@@ -27,7 +27,6 @@ package io.questdb.cutlass.http;
 import static io.questdb.test.tools.TestUtils.assertMemoryLeak;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +37,6 @@ import java.util.concurrent.locks.LockSupport;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -4973,7 +4971,7 @@ public class IODispatcherTest {
                                 Assert.assertTrue(n > 0);
 
                                 for (int i = 0; i < n; i++) {
-                                    sink2.put((char) Unsafe.getUnsafe().getByte(buffer + i));
+                                    sink2.put((char) Unsafe.UNSAFE.getByte(buffer + i));
                                 }
                                 // copy response bytes to sink
                                 read += n;
@@ -5285,7 +5283,7 @@ public class IODispatcherTest {
                     new Thread(() -> {
                         final StringSink sink = new StringSink();
                         final long responseBuf = Unsafe.malloc(32);
-                        Unsafe.getUnsafe().putByte(responseBuf, (byte) 'A');
+                        Unsafe.UNSAFE.putByte(responseBuf, (byte) 'A');
 
                         final HttpRequestProcessor processor = new HttpRequestProcessor() {
                             @Override
@@ -5373,7 +5371,7 @@ public class IODispatcherTest {
                                         Assert.assertEquals(len, Net.send(fd, buffer, len));
                                         Assert.assertEquals("fd=" + fd + ", i=" + i, 1, Net.recv(fd, buffer, 1));
                                         LOG.info().$("i=").$(i).$(", j=").$(k).$();
-                                        Assert.assertEquals('A', Unsafe.getUnsafe().getByte(buffer));
+                                        Assert.assertEquals('A', Unsafe.UNSAFE.getByte(buffer));
                                     } finally {
                                         Unsafe.free(buffer, len);
                                     }
@@ -5425,7 +5423,7 @@ public class IODispatcherTest {
                 if (headerCheckRemaining > 0) {
                     for (int i = 0; i < n && headerCheckRemaining > 0; i++) {
 //                        System.out.print(expectedResponseHeader.charAt(expectedHeaderLen - headerCheckRemaining));
-                        if (expectedResponseHeader.charAt(expectedHeaderLen - headerCheckRemaining) != (char) Unsafe.getUnsafe().getByte(buffer + i)) {
+                        if (expectedResponseHeader.charAt(expectedHeaderLen - headerCheckRemaining) != (char) Unsafe.UNSAFE.getByte(buffer + i)) {
                             Assert.fail("at " + (expectedHeaderLen - headerCheckRemaining));
                         }
                         headerCheckRemaining--;
@@ -5439,7 +5437,7 @@ public class IODispatcherTest {
                             contentRemaining = nonRepeatedContentLength;
                             rnd.reset();
                         }
-                        Assert.assertEquals(rnd.nextByte(), Unsafe.getUnsafe().getByte(buffer + i));
+                        Assert.assertEquals(rnd.nextByte(), Unsafe.UNSAFE.getByte(buffer + i));
                         contentRemaining--;
                     }
 
@@ -5611,7 +5609,7 @@ public class IODispatcherTest {
 
         long buf = Unsafe.malloc(bufLen); // 1Mb buffer
         for (int i = 0; i < bufLen; i++) {
-            Unsafe.getUnsafe().putByte(buf + i, rnd.nextByte());
+            Unsafe.UNSAFE.putByte(buf + i, rnd.nextByte());
         }
 
         for (int i = 0; i < 20; i++) {

@@ -163,7 +163,7 @@ public class FastMap implements Map {
 
     private static boolean eqMixed(long a, long b, long lim) {
         while (b < lim - 8) {
-            if (Unsafe.getUnsafe().getLong(a) != Unsafe.getUnsafe().getLong(b)) {
+            if (Unsafe.UNSAFE.getLong(a) != Unsafe.UNSAFE.getLong(b)) {
                 return false;
             }
             a += 8;
@@ -171,7 +171,7 @@ public class FastMap implements Map {
         }
 
         while (b < lim) {
-            if (Unsafe.getUnsafe().getByte(a++) != Unsafe.getUnsafe().getByte(b++)) {
+            if (Unsafe.UNSAFE.getByte(a++) != Unsafe.UNSAFE.getByte(b++)) {
                 return false;
             }
         }
@@ -180,7 +180,7 @@ public class FastMap implements Map {
 
     private static boolean eqLong(long a, long b, long lim) {
         while (b < lim) {
-            if (Unsafe.getUnsafe().getLong(a) != Unsafe.getUnsafe().getLong(b)) {
+            if (Unsafe.UNSAFE.getLong(a) != Unsafe.UNSAFE.getLong(b)) {
                 return false;
             }
             a += 8;
@@ -191,7 +191,7 @@ public class FastMap implements Map {
 
     private static boolean eqInt(long a, long b, long lim) {
         while (b < lim) {
-            if (Unsafe.getUnsafe().getInt(a) != Unsafe.getUnsafe().getInt(b)) {
+            if (Unsafe.UNSAFE.getInt(a) != Unsafe.UNSAFE.getInt(b)) {
                 return false;
             }
             a += 4;
@@ -267,7 +267,7 @@ public class FastMap implements Map {
         long b = keyWriter.startAddress;
 
         // check length first
-        if (Unsafe.getUnsafe().getInt(a) != Unsafe.getUnsafe().getInt(b)) {
+        if (Unsafe.UNSAFE.getInt(a) != Unsafe.UNSAFE.getInt(b)) {
             return false;
         }
 
@@ -353,7 +353,7 @@ public class FastMap implements Map {
             if (offset == -1) {
                 continue;
             }
-            int index = hashFunction.hash(kStart + offset + keyDataOffset, Unsafe.getUnsafe().getInt(kStart + offset) - keyDataOffset) & mask;
+            int index = hashFunction.hash(kStart + offset + keyDataOffset, Unsafe.UNSAFE.getInt(kStart + offset) - keyDataOffset) & mask;
             while (pointers.get(index) != -1) {
                 index = (index + 1) & mask;
             }
@@ -464,7 +464,7 @@ public class FastMap implements Map {
 
                 checkSize((int) len);
                 int l = (int) (len - 4);
-                Unsafe.getUnsafe().putInt(appendAddress, l);
+                Unsafe.UNSAFE.putInt(appendAddress, l);
                 value.copyTo(appendAddress + 4L, 0L, l);
                 appendAddress += len;
                 writeOffset();
@@ -474,7 +474,7 @@ public class FastMap implements Map {
         @Override
         public void putBool(boolean value) {
             checkSize(1);
-            Unsafe.getUnsafe().putByte(appendAddress, (byte) (value ? 1 : 0));
+            Unsafe.UNSAFE.putByte(appendAddress, (byte) (value ? 1 : 0));
             appendAddress += 1;
             writeOffset();
         }
@@ -482,7 +482,7 @@ public class FastMap implements Map {
         @Override
         public void putByte(byte value) {
             checkSize(1);
-            Unsafe.getUnsafe().putByte(appendAddress, value);
+            Unsafe.UNSAFE.putByte(appendAddress, value);
             appendAddress += 1;
             writeOffset();
         }
@@ -495,7 +495,7 @@ public class FastMap implements Map {
         @Override
         public void putDouble(double value) {
             checkSize(Double.BYTES);
-            Unsafe.getUnsafe().putDouble(appendAddress, value);
+            Unsafe.UNSAFE.putDouble(appendAddress, value);
             appendAddress += Double.BYTES;
             writeOffset();
         }
@@ -503,7 +503,7 @@ public class FastMap implements Map {
         @Override
         public void putFloat(float value) {
             checkSize(Float.BYTES);
-            Unsafe.getUnsafe().putFloat(appendAddress, value);
+            Unsafe.UNSAFE.putFloat(appendAddress, value);
             appendAddress += Float.BYTES;
             writeOffset();
         }
@@ -511,7 +511,7 @@ public class FastMap implements Map {
         @Override
         public void putInt(int value) {
             checkSize(Integer.BYTES);
-            Unsafe.getUnsafe().putInt(appendAddress, value);
+            Unsafe.UNSAFE.putInt(appendAddress, value);
             appendAddress += Integer.BYTES;
             writeOffset();
         }
@@ -519,7 +519,7 @@ public class FastMap implements Map {
         @Override
         public void putLong(long value) {
             checkSize(Long.BYTES);
-            Unsafe.getUnsafe().putLong(appendAddress, value);
+            Unsafe.UNSAFE.putLong(appendAddress, value);
             appendAddress += Long.BYTES;
             writeOffset();
         }
@@ -527,10 +527,10 @@ public class FastMap implements Map {
         @Override
         public void putLong256(Long256 value) {
             checkSize(Long256.BYTES);
-            Unsafe.getUnsafe().putLong(appendAddress, value.getLong0());
-            Unsafe.getUnsafe().putLong(appendAddress + Long.BYTES, value.getLong1());
-            Unsafe.getUnsafe().putLong(appendAddress + Long.BYTES * 2, value.getLong2());
-            Unsafe.getUnsafe().putLong(appendAddress + Long.BYTES * 3, value.getLong3());
+            Unsafe.UNSAFE.putLong(appendAddress, value.getLong0());
+            Unsafe.UNSAFE.putLong(appendAddress + Long.BYTES, value.getLong1());
+            Unsafe.UNSAFE.putLong(appendAddress + Long.BYTES * 2, value.getLong2());
+            Unsafe.UNSAFE.putLong(appendAddress + Long.BYTES * 3, value.getLong3());
             appendAddress += Long256.BYTES;
             writeOffset();
         }
@@ -545,7 +545,7 @@ public class FastMap implements Map {
         @Override
         public void putShort(short value) {
             checkSize(2);
-            Unsafe.getUnsafe().putShort(appendAddress, value);
+            Unsafe.UNSAFE.putShort(appendAddress, value);
             appendAddress += 2;
             writeOffset();
         }
@@ -553,7 +553,7 @@ public class FastMap implements Map {
         @Override
         public void putChar(char value) {
             checkSize(Character.BYTES);
-            Unsafe.getUnsafe().putChar(appendAddress, value);
+            Unsafe.UNSAFE.putChar(appendAddress, value);
             appendAddress += Character.BYTES;
             writeOffset();
         }
@@ -567,10 +567,10 @@ public class FastMap implements Map {
 
             int len = value.length();
             checkSize((len << 1) + 4);
-            Unsafe.getUnsafe().putInt(appendAddress, len);
+            Unsafe.UNSAFE.putInt(appendAddress, len);
             appendAddress += 4;
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putChar(appendAddress + (i << 1), value.charAt(i));
+                Unsafe.UNSAFE.putChar(appendAddress + (i << 1), value.charAt(i));
             }
             appendAddress += len << 1;
             writeOffset();
@@ -580,10 +580,10 @@ public class FastMap implements Map {
         public void putStr(CharSequence value, int lo, int hi) {
             int len = hi - lo;
             checkSize((len << 1) + 4);
-            Unsafe.getUnsafe().putInt(appendAddress, len);
+            Unsafe.UNSAFE.putInt(appendAddress, len);
             appendAddress += 4;
             for (int i = lo; i < hi; i++) {
-                Unsafe.getUnsafe().putChar(appendAddress + ((i - lo) << 1), value.charAt(i));
+                Unsafe.UNSAFE.putChar(appendAddress + ((i - lo) << 1), value.charAt(i));
             }
             appendAddress += len << 1;
             writeOffset();
@@ -598,10 +598,10 @@ public class FastMap implements Map {
 
             int len = value.length();
             checkSize((len << 1) + 4);
-            Unsafe.getUnsafe().putInt(appendAddress, len);
+            Unsafe.UNSAFE.putInt(appendAddress, len);
             appendAddress += 4;
             for (int i = 0; i < len; i++) {
-                Unsafe.getUnsafe().putChar(appendAddress + (i << 1), Character.toLowerCase(value.charAt(i)));
+                Unsafe.UNSAFE.putChar(appendAddress + (i << 1), Character.toLowerCase(value.charAt(i)));
             }
             appendAddress += len << 1;
             writeOffset();
@@ -611,10 +611,10 @@ public class FastMap implements Map {
         public void putStrLowerCase(CharSequence value, int lo, int hi) {
             int len = hi - lo;
             checkSize((len << 1) + 4);
-            Unsafe.getUnsafe().putInt(appendAddress, len);
+            Unsafe.UNSAFE.putInt(appendAddress, len);
             appendAddress += 4;
             for (int i = lo; i < hi; i++) {
-                Unsafe.getUnsafe().putChar(appendAddress + ((i - lo) << 1), Character.toLowerCase(value.charAt(i)));
+                Unsafe.UNSAFE.putChar(appendAddress + ((i - lo) << 1), Character.toLowerCase(value.charAt(i)));
             }
             appendAddress += len << 1;
             writeOffset();
@@ -638,12 +638,12 @@ public class FastMap implements Map {
         }
 
         private void commit() {
-            Unsafe.getUnsafe().putInt(startAddress, len = (int) (appendAddress - startAddress));
+            Unsafe.UNSAFE.putInt(startAddress, len = (int) (appendAddress - startAddress));
         }
 
         private void putNull() {
             checkSize(4);
-            Unsafe.getUnsafe().putInt(appendAddress, TableUtils.NULL_LEN);
+            Unsafe.UNSAFE.putInt(appendAddress, TableUtils.NULL_LEN);
             appendAddress += 4;
             writeOffset();
         }
@@ -653,7 +653,7 @@ public class FastMap implements Map {
             if (len > Integer.MAX_VALUE) {
                 throw CairoException.instance(0).put("row data is too large");
             }
-            Unsafe.getUnsafe().putInt(nextColOffset, (int) len);
+            Unsafe.UNSAFE.putInt(nextColOffset, (int) len);
             nextColOffset += 4;
         }
     }

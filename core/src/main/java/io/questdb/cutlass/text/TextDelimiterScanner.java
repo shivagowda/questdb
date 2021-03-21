@@ -107,9 +107,9 @@ public class TextDelimiterScanner implements Closeable {
 
         int lineLen = 0;
 
-        Unsafe.getUnsafe().setMemory(matrix, matrixSize, (byte) 0);
+        Unsafe.UNSAFE.setMemory(matrix, matrixSize, (byte) 0);
         while (cursor < hi && lineCount < lineCountLimit) {
-            byte b = Unsafe.getUnsafe().getByte(cursor++);
+            byte b = Unsafe.UNSAFE.getByte(cursor++);
 
             if (delayedClosingQuote) {
                 delayedClosingQuote = false;
@@ -196,7 +196,7 @@ public class TextDelimiterScanner implements Closeable {
                 // calculate mean
                 long sum = 0;
                 for (int l = 0; l < lineCount; l++) {
-                    sum += Unsafe.getUnsafe().getInt(matrix + offset);
+                    sum += Unsafe.UNSAFE.getInt(matrix + offset);
                     offset += matrixRowSize;
                 }
 
@@ -205,7 +205,7 @@ public class TextDelimiterScanner implements Closeable {
                 if (mean > 0) {
                     double squareSum = 0.0;
                     for (int l = 0; l < lineCount; l++) {
-                        double x = Unsafe.getUnsafe().getInt(matrix + offset) - mean;
+                        double x = Unsafe.UNSAFE.getInt(matrix + offset) - mean;
                         squareSum += x * x;
                         offset += matrixRowSize;
                     }
@@ -278,7 +278,7 @@ public class TextDelimiterScanner implements Closeable {
     private void bumpCountAt(int line, byte bytePosition, int increment) {
         if (bytePosition > 0) {
             final long pos = matrix + (line * matrixRowSize + bytePosition * Integer.BYTES);
-            Unsafe.getUnsafe().putInt(pos, Unsafe.getUnsafe().getInt(pos) + increment);
+            Unsafe.UNSAFE.putInt(pos, Unsafe.UNSAFE.getInt(pos) + increment);
         }
     }
 

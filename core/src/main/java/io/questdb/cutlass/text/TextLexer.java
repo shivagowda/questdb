@@ -242,7 +242,7 @@ public class TextLexer implements Closeable, Mutable {
         long p = Unsafe.malloc(len);
         long l = lineRollBufCur - lineRollBufPtr;
         if (l > 0) {
-            Unsafe.getUnsafe().copyMemory(lineRollBufPtr, p, l);
+            Unsafe.UNSAFE.copyMemory(lineRollBufPtr, p, l);
         }
         Unsafe.free(lineRollBufPtr, lineRollBufLen);
         if (updateFields) {
@@ -256,7 +256,7 @@ public class TextLexer implements Closeable, Mutable {
 
     private void growRollBufAndPut(byte c) {
         if (growRollBuf(lineRollBufLen + 1, true)) {
-            Unsafe.getUnsafe().putByte(lineRollBufCur++, c);
+            Unsafe.UNSAFE.putByte(lineRollBufCur++, c);
         }
     }
 
@@ -318,7 +318,7 @@ public class TextLexer implements Closeable, Mutable {
 
         try {
             while (ptr < hi) {
-                final byte c = Unsafe.getUnsafe().getByte(ptr++);
+                final byte c = Unsafe.UNSAFE.getByte(ptr++);
 
                 if (rollBufferUnusable) {
                     eol(ptr, c);
@@ -368,7 +368,7 @@ public class TextLexer implements Closeable, Mutable {
         if (lineRollBufCur - lineRollBufPtr == lineRollBufLen) {
             growRollBufAndPut(c);
         } else {
-            Unsafe.getUnsafe().putByte(lineRollBufCur++, c);
+            Unsafe.UNSAFE.putByte(lineRollBufCur++, c);
         }
     }
 
@@ -378,7 +378,7 @@ public class TextLexer implements Closeable, Mutable {
         int l = (int) (hi - lo - lastLineStart);
         if (l < lineRollBufLen || growRollBuf(l, false)) {
             assert lo + lastLineStart + l <= hi;
-            Unsafe.getUnsafe().copyMemory(lo + lastLineStart, lineRollBufPtr, l);
+            Unsafe.UNSAFE.copyMemory(lo + lastLineStart, lineRollBufPtr, l);
             lineRollBufCur = lineRollBufPtr + l;
             shift(lo + lastLineStart - lineRollBufPtr);
         }

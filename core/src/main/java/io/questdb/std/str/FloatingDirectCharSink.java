@@ -74,7 +74,7 @@ public class FloatingDirectCharSink extends AbstractCharSink implements CharSequ
 
     @Override
     public char charAt(int index) {
-        return Unsafe.getUnsafe().getChar(ptr + index * 2L);
+        return Unsafe.UNSAFE.getChar(ptr + index * 2L);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class FloatingDirectCharSink extends AbstractCharSink implements CharSequ
         assert checkCapacity(l);
         int l2 = l * 2;
         for (int i = 0; i < l; i++) {
-            Unsafe.getUnsafe().putChar(lo + i * 2, cs.charAt(i));
+            Unsafe.UNSAFE.putChar(lo + i * 2, cs.charAt(i));
         }
         this.lo += l2;
         return this;
@@ -99,7 +99,7 @@ public class FloatingDirectCharSink extends AbstractCharSink implements CharSequ
         assert checkCapacity(len);
         int l2 = len * 2;
         for (int i = 0; i < len; i++) {
-            Unsafe.getUnsafe().putChar(lo + i * 2, chars[i + start]);
+            Unsafe.UNSAFE.putChar(lo + i * 2, chars[i + start]);
         }
 
         this.lo += l2;
@@ -109,7 +109,7 @@ public class FloatingDirectCharSink extends AbstractCharSink implements CharSequ
     @Override
     public CharSink put(char c) {
         assert checkCapacity(1);
-        Unsafe.getUnsafe().putChar(lo, c);
+        Unsafe.UNSAFE.putChar(lo, c);
         lo += 2;
         return this;
     }

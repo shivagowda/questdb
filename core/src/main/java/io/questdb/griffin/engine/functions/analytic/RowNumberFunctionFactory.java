@@ -34,7 +34,6 @@ import io.questdb.cairo.map.MapKey;
 import io.questdb.cairo.map.MapValue;
 import io.questdb.cairo.sql.*;
 import io.questdb.griffin.FunctionFactory;
-import io.questdb.griffin.SqlException;
 import io.questdb.griffin.SqlExecutionContext;
 import io.questdb.griffin.engine.analytic.AnalyticContext;
 import io.questdb.griffin.engine.analytic.AnalyticFunction;
@@ -112,7 +111,7 @@ public class RowNumberFunctionFactory implements FunctionFactory {
                 x = value.getLong(0);
             }
             value.putLong(0, x + 1);
-            Unsafe.getUnsafe().putLong(spi.getAddress(recordOffset, columnIndex), x);
+            Unsafe.UNSAFE.putLong(spi.getAddress(recordOffset, columnIndex), x);
         }
 
         @Override

@@ -45,7 +45,7 @@ public class DirectCharSequence extends AbstractCharSequence implements Mutable 
 
         int h = 0;
         for (long p = lo; p < hi; p += 2) {
-            h = 31 * h + Unsafe.getUnsafe().getChar(p);
+            h = 31 * h + Unsafe.UNSAFE.getChar(p);
         }
         return h;
     }
@@ -65,7 +65,7 @@ public class DirectCharSequence extends AbstractCharSequence implements Mutable 
 
     @Override
     public char charAt(int index) {
-        return Unsafe.getUnsafe().getChar(lo + (index << 1));
+        return Unsafe.UNSAFE.getChar(lo + (index << 1));
     }
 
     public DirectCharSequence of(long lo, long hi) {

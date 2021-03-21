@@ -78,12 +78,12 @@ public class TableBlockWriter implements Closeable {
     public void appendPageFrameColumn(int columnIndex, long pageFrameSize, long sourceAddress) {
         LOG.info().$("appending data").$(" [tableName=").$(writer.getName()).$(", columnIndex=").$(columnIndex).$(", pageFrameSize=").$(pageFrameSize).$(']').$();
         if (columnIndex == timestampColumnIndex) {
-            long firstBlockTimestamp = Unsafe.getUnsafe().getLong(sourceAddress);
+            long firstBlockTimestamp = Unsafe.UNSAFE.getLong(sourceAddress);
             if (firstBlockTimestamp < firstTimestamp) {
                 firstTimestamp = firstBlockTimestamp;
             }
             long addr = sourceAddress + pageFrameSize - Long.BYTES;
-            long lastBlockTimestamp = Unsafe.getUnsafe().getLong(addr);
+            long lastBlockTimestamp = Unsafe.UNSAFE.getLong(addr);
             if (lastBlockTimestamp > lastTimestamp) {
                 lastTimestamp = lastBlockTimestamp;
             }
@@ -743,10 +743,10 @@ public class TableBlockWriter implements Closeable {
             while (columnDataAddress < columnDataAddressHi) {
                 assert columnIndexAddress + Long.BYTES <= (indexMappingStart + indexMappingSz);
                 nRowsAdded++;
-                Unsafe.getUnsafe().putLong(columnIndexAddress, offset);
+                Unsafe.UNSAFE.putLong(columnIndexAddress, offset);
                 columnIndexAddress += Long.BYTES;
                 // TODO: remove branching similar to how this is done for strings
-                long binLen = Unsafe.getUnsafe().getLong(columnDataAddress);
+                long binLen = Unsafe.UNSAFE.getLong(columnDataAddress);
                 long sz;
                 if (binLen == TableUtils.NULL_LEN) {
                     sz = Long.BYTES;
@@ -779,9 +779,9 @@ public class TableBlockWriter implements Closeable {
             while (columnDataAddress < columnDataAddressHi) {
                 assert columnIndexAddress + Long.BYTES <= (indexMappingStart + indexMappingSz);
                 nRowsAdded++;
-                Unsafe.getUnsafe().putLong(columnIndexAddress, offset);
+                Unsafe.UNSAFE.putLong(columnIndexAddress, offset);
                 columnIndexAddress += Long.BYTES;
-                final int strLen = Unsafe.getUnsafe().getInt(columnDataAddress);
+                final int strLen = Unsafe.UNSAFE.getInt(columnDataAddress);
                 // +1 the length will turn NULL_LEN into 0
                 final long bit = ((strLen >>> 30) & 0x02) ^ 0x02; // our sign bit is now bit #1
                 // so null will evaluate to just VirtualMemory.STRING_LENGTH_BYTES
@@ -801,7 +801,7 @@ public class TableBlockWriter implements Closeable {
                 try {
                     switch (taskType) {
                         case AppendBlock:
-                            Unsafe.getUnsafe().copyMemory(sourceAddress, destAddress, sourceSizeOrEnd);
+                            Unsafe.UNSAFE.copyMemory(sourceAddress, destAddress, sourceSizeOrEnd);
                             return true;
 
                         case GenerateStringIndex:

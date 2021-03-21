@@ -46,17 +46,17 @@ public class VectTest {
         long indexPtr4 = seedAndSort(count);
 
         long struct = Unsafe.malloc(Long.BYTES * 8);
-        Unsafe.getUnsafe().putLong(struct, indexPtr1);
-        Unsafe.getUnsafe().putLong(struct + Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct, indexPtr1);
+        Unsafe.UNSAFE.putLong(struct + Long.BYTES, count);
 
-        Unsafe.getUnsafe().putLong(struct + 2 * Long.BYTES, indexPtr2);
-        Unsafe.getUnsafe().putLong(struct + 3 * Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct + 2 * Long.BYTES, indexPtr2);
+        Unsafe.UNSAFE.putLong(struct + 3 * Long.BYTES, count);
 
-        Unsafe.getUnsafe().putLong(struct + 4 * Long.BYTES, indexPtr3);
-        Unsafe.getUnsafe().putLong(struct + 5 * Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct + 4 * Long.BYTES, indexPtr3);
+        Unsafe.UNSAFE.putLong(struct + 5 * Long.BYTES, count);
 
-        Unsafe.getUnsafe().putLong(struct + 6 * Long.BYTES, indexPtr4);
-        Unsafe.getUnsafe().putLong(struct + 7 * Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct + 6 * Long.BYTES, indexPtr4);
+        Unsafe.UNSAFE.putLong(struct + 7 * Long.BYTES, count);
         try {
             long merged = Vect.mergeLongIndexesAsc(struct, 4);
             assertIndexAsc(count * 4, merged);
@@ -90,12 +90,12 @@ public class VectTest {
         long indexPtr3 = seedAndSort(count3);
 
         long struct = Unsafe.malloc(Long.BYTES * 6);
-        Unsafe.getUnsafe().putLong(struct, indexPtr1);
-        Unsafe.getUnsafe().putLong(struct + Long.BYTES, count1);
-        Unsafe.getUnsafe().putLong(struct + 2 * Long.BYTES, indexPtr2);
-        Unsafe.getUnsafe().putLong(struct + 3 * Long.BYTES, count2);
-        Unsafe.getUnsafe().putLong(struct + 4 * Long.BYTES, indexPtr3);
-        Unsafe.getUnsafe().putLong(struct + 5 * Long.BYTES, count3);
+        Unsafe.UNSAFE.putLong(struct, indexPtr1);
+        Unsafe.UNSAFE.putLong(struct + Long.BYTES, count1);
+        Unsafe.UNSAFE.putLong(struct + 2 * Long.BYTES, indexPtr2);
+        Unsafe.UNSAFE.putLong(struct + 3 * Long.BYTES, count2);
+        Unsafe.UNSAFE.putLong(struct + 4 * Long.BYTES, indexPtr3);
+        Unsafe.UNSAFE.putLong(struct + 5 * Long.BYTES, count3);
         try {
             long merged = Vect.mergeLongIndexesAsc(struct, 3);
             assertIndexAsc(count1 + count2 + count3, merged);
@@ -116,10 +116,10 @@ public class VectTest {
         long indexPtr2 = seedAndSort(count2);
 
         long struct = Unsafe.malloc(Long.BYTES * 4);
-        Unsafe.getUnsafe().putLong(struct, indexPtr1);
-        Unsafe.getUnsafe().putLong(struct + Long.BYTES, count1);
-        Unsafe.getUnsafe().putLong(struct + 2 * Long.BYTES, indexPtr2);
-        Unsafe.getUnsafe().putLong(struct + 3 * Long.BYTES, count2);
+        Unsafe.UNSAFE.putLong(struct, indexPtr1);
+        Unsafe.UNSAFE.putLong(struct + Long.BYTES, count1);
+        Unsafe.UNSAFE.putLong(struct + 2 * Long.BYTES, indexPtr2);
+        Unsafe.UNSAFE.putLong(struct + 3 * Long.BYTES, count2);
         try {
             long merged = Vect.mergeLongIndexesAsc(struct, 2);
             assertIndexAsc(count1 + count2, merged);
@@ -139,10 +139,10 @@ public class VectTest {
         long indexPtr2 = seedAndSort(count2);
 
         long struct = Unsafe.malloc(Long.BYTES * 4);
-        Unsafe.getUnsafe().putLong(struct, indexPtr1);
-        Unsafe.getUnsafe().putLong(struct + Long.BYTES, count1);
-        Unsafe.getUnsafe().putLong(struct + 2 * Long.BYTES, indexPtr2);
-        Unsafe.getUnsafe().putLong(struct + 3 * Long.BYTES, count2);
+        Unsafe.UNSAFE.putLong(struct, indexPtr1);
+        Unsafe.UNSAFE.putLong(struct + Long.BYTES, count1);
+        Unsafe.UNSAFE.putLong(struct + 2 * Long.BYTES, indexPtr2);
+        Unsafe.UNSAFE.putLong(struct + 3 * Long.BYTES, count2);
         try {
             long merged = Vect.mergeLongIndexesAsc(struct, 2);
             assertIndexAsc(count1 + count2, merged);
@@ -161,10 +161,10 @@ public class VectTest {
         long indexPtr2 = seedAndSort(count);
 
         long struct = Unsafe.malloc(Long.BYTES * 4);
-        Unsafe.getUnsafe().putLong(struct, indexPtr1);
-        Unsafe.getUnsafe().putLong(struct + Long.BYTES, count);
-        Unsafe.getUnsafe().putLong(struct + 2 * Long.BYTES, indexPtr2);
-        Unsafe.getUnsafe().putLong(struct + 3 * Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct, indexPtr1);
+        Unsafe.UNSAFE.putLong(struct + Long.BYTES, count);
+        Unsafe.UNSAFE.putLong(struct + 2 * Long.BYTES, indexPtr2);
+        Unsafe.UNSAFE.putLong(struct + 3 * Long.BYTES, count);
         try {
             long merged = Vect.mergeLongIndexesAsc(struct, 2);
             assertIndexAsc(count * 2, merged);
@@ -198,18 +198,18 @@ public class VectTest {
         final long indexAddr = Unsafe.malloc(2 * Long.BYTES);
         try {
             seedMem(1, indexAddr);
-            long expected = Unsafe.getUnsafe().getLong(indexAddr);
+            long expected = Unsafe.UNSAFE.getLong(indexAddr);
             Vect.sortLongIndexAscInPlace(indexAddr, 1);
-            Assert.assertEquals(expected, Unsafe.getUnsafe().getLong(indexAddr));
+            Assert.assertEquals(expected, Unsafe.UNSAFE.getLong(indexAddr));
         } finally {
             Unsafe.free(indexAddr, 2 * Long.BYTES);
         }
     }
 
     private void assertIndexAsc(int count, long indexAddr) {
-        long v = Unsafe.getUnsafe().getLong(indexAddr);
+        long v = Unsafe.UNSAFE.getLong(indexAddr);
         for (int i = 1; i < count; i++) {
-            long next = Unsafe.getUnsafe().getLong(indexAddr + i * 2 * Long.BYTES);
+            long next = Unsafe.UNSAFE.getLong(indexAddr + i * 2 * Long.BYTES);
             if (next < v) {
                 System.out.println("wtf?: " + next + " < " + v);
             }
@@ -228,8 +228,8 @@ public class VectTest {
     private void seedMem(int count, long p) {
         for (int i = 0; i < count; i++) {
             final long z = rnd.nextPositiveLong();
-            Unsafe.getUnsafe().putLong(p + i * 2 * Long.BYTES, z);
-            Unsafe.getUnsafe().putLong(p + i * 2 * Long.BYTES + 8, i);
+            Unsafe.UNSAFE.putLong(p + i * 2 * Long.BYTES, z);
+            Unsafe.UNSAFE.putLong(p + i * 2 * Long.BYTES + 8, i);
         }
     }
 

@@ -1670,7 +1670,7 @@ public class TableWriterTest extends AbstractCairoTest {
             CairoTestUtils.createAllTable(configuration, PartitionBy.NONE);
             long buf = Unsafe.malloc(8);
             try {
-                Unsafe.getUnsafe().putLong(buf, 89808823424L);
+                Unsafe.UNSAFE.putLong(buf, 89808823424L);
 
                 try (Path path = new Path().of(root).concat("all").concat(TableUtils.TODO_FILE_NAME).$()) {
                     long fd = Files.openRW(path);

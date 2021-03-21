@@ -67,7 +67,7 @@ public class TextUtilTest {
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
         long ptr = Unsafe.malloc(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
-            Unsafe.getUnsafe().putByte(ptr + i, bytes[i]);
+            Unsafe.UNSAFE.putByte(ptr + i, bytes[i]);
         }
 
         if (doubleQuoteParse) {

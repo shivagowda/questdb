@@ -578,7 +578,7 @@ public class CairoLineProtoParserTest extends AbstractCairoTest {
                     long mem = Unsafe.malloc(len);
                     try {
                         for (int i = 0; i < len; i++) {
-                            Unsafe.getUnsafe().putByte(mem + i, bytes[i]);
+                            Unsafe.UNSAFE.putByte(mem + i, bytes[i]);
                         }
                         try (LineProtoLexer lexer = new LineProtoLexer(4096)) {
                             lexer.withParser(parser);

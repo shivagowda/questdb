@@ -98,7 +98,7 @@ public class LineTcpAuthConnectionContextTest extends AbstractCairoTest {
                 byte[] bytes = recvBuffer.getBytes(StandardCharsets.UTF_8);
                 int n = 0;
                 while (n < bufferLen && n < bytes.length) {
-                    Unsafe.getUnsafe().putByte(buffer++, bytes[n++]);
+                    Unsafe.UNSAFE.putByte(buffer++, bytes[n++]);
                 }
                 recvBuffer = new String(bytes, n, bytes.length - n);
                 return n;
@@ -119,7 +119,7 @@ public class LineTcpAuthConnectionContextTest extends AbstractCairoTest {
                 sentBytes = new byte[nSent];
 
                 for (int n = 0; n < nSent; n++) {
-                    sentBytes[n] = Unsafe.getUnsafe().getByte(buffer + n);
+                    sentBytes[n] = Unsafe.UNSAFE.getByte(buffer + n);
                 }
 
                 return nSent;

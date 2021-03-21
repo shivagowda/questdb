@@ -267,7 +267,7 @@ public class WriterPool extends AbstractPool implements ResourcePool<TableWriter
                 writer.setLifecycleManager(e);
                 writer.transferLock(e.lockFd);
                 e.lockFd = -1;
-                Unsafe.getUnsafe().putOrderedLong(e, ENTRY_OWNER, UNALLOCATED);
+                Unsafe.UNSAFE.putOrderedLong(e, ENTRY_OWNER, UNALLOCATED);
             }
             notifyListener(thread, name, PoolListener.EV_UNLOCKED);
             LOG.info().$("unlocked [table=`").utf8(name).$("`]").$();
