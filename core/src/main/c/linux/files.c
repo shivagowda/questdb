@@ -34,7 +34,7 @@
 #include <sys/fcntl.h>
 
 
-inline jlong _io_questdb_std_Files_mremap0
+static inline jlong _io_questdb_std_Files_mremap0
         (jlong fd, jlong address, jlong previousLen, jlong newLen, jlong offset, jint flags) {
     int prot = 0;
 
