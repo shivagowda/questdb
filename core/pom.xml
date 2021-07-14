@@ -97,6 +97,7 @@
                     <excludes>
                         <exclude>${excludeTestPattern1}</exclude>
                     </excludes>
+		    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
