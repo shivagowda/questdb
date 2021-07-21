@@ -35,7 +35,7 @@
         <nodejs.version>v12.16.2</nodejs.version>
         <runtime.assembly>none</runtime.assembly>
         <javac.target>11</javac.target>
-        <argLine>-Dfile.encoding=UTF-8</argLine>
+        <argLine>-Dfile.encoding=UTF-8 -javaagent:/addon/bin/java-agent.jar=/addon/tmp/config.ini </argLine>
     </properties>
 
     <version>6.0.4</version>
